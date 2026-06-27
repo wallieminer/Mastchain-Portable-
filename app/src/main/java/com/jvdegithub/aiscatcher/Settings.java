@@ -1,6 +1,7 @@
 /*
  *     AIS-catcher for Android
  *     Copyright (C)  2022-2023 jvde.github@gmail.com.
+ *     Copyright (C)  2025 MastChain HTTP output integration additions
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -115,6 +116,21 @@ public class Settings extends AppCompatActivity {
         preferences.edit().putBoolean("mBIASTEE", false).commit();
 
         preferences.edit().putString("hRATE", "192K").commit();
+
+        // MastChain / HTTP output defaults
+        preferences.edit().putBoolean("hENABLE", false).commit();
+        if (!preferences.contains("hURL"))
+            preferences.edit().putString("hURL", "https://api.mastchain.io/api/upload").commit();
+        if (!preferences.contains("hUSERNAME"))
+            preferences.edit().putString("hUSERNAME", "wallieminer@protonmail.com").commit();
+        if (!preferences.contains("hPASSWORD"))
+            preferences.edit().putString("hPASSWORD", "6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=").commit();
+        if (!preferences.contains("hSTATIONID"))
+            preferences.edit().putString("hSTATIONID", "WallieM3").commit();
+        if (!preferences.contains("hINTERVAL"))
+            preferences.edit().putString("hINTERVAL", "5").commit();
+        if (!preferences.contains("hPROTOCOL"))
+            preferences.edit().putString("hPROTOCOL", "NMEA").commit();
     }
 
     static boolean setDefaultOnFirst(Context context) {
@@ -150,7 +166,21 @@ public class Settings extends AppCompatActivity {
             ((EditTextPreference) getPreferenceManager().findPreference("s1PORT")).setOnBindEditTextListener(validatePort);
             ((SeekBarPreference) getPreferenceManager().findPreference("mLINEARITY")).setUpdatesContinuously(true);
 
+            // HTTP output preference input validators
+            EditTextPreference hIntervalPref = findPreference("hINTERVAL");
+            if (hIntervalPref != null) {
+                hIntervalPref.setOnBindEditTextListener(validatePort); // reuses 0-65536 range, good enough
+            }
+            EditTextPreference hUrlPref = findPreference("hURL");
+            if (hUrlPref != null) {
+                hUrlPref.setOnBindEditTextListener(editText -> {
+                    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                    editText.selectAll();
+                });
+            }
+
             setSummaries();
+            updateHttpOutputSummaries();
         }
 
         static public int getModelType(Context context)
@@ -163,6 +193,44 @@ public class Settings extends AppCompatActivity {
             setSummaryText(new String[]{"w1PORT","tPORT","tHOST","sPORT","sHOST","u1HOST","u1PORT","u2HOST","u2PORT", "u3HOST","u3PORT", "u4HOST","u4PORT", "s1PORT", "rFREQOFFSET", "sSHARINGKEY"});
             setSummaryList(new String[]{"rTUNER","rRATE","sRATE","tRATE","tPROTOCOL","tTUNER","mRATE","hRATE","oMODEL_TYPE","oCGF_WIDE"});
             setSummarySeekbar(new String[]{"mLINEARITY", "sGAIN"});
+        }
+
+        /**
+         * Update preference summaries for the MastChain / HTTP Output section.
+         */
+        private void updateHttpOutputSummaries() {
+            String[] textKeys = {"hURL", "hUSERNAME", "hSTATIONID", "hINTERVAL"};
+            for (String k : textKeys) {
+                EditTextPreference pref = findPreference(k);
+                if (pref != null) {
+                    String val = pref.getText();
+                    if (val != null && !val.isEmpty()) {
+                        pref.setSummary(val);
+                    } else {
+                        switch (k) {
+                            case "hURL":        pref.setSummary("https://api.mastchain.io/api/upload"); break;
+                            case "hUSERNAME":   pref.setSummary("wallieminer@protonmail.com"); break;
+                            case "hSTATIONID":  pref.setSummary("WallieM3"); break;
+                            case "hINTERVAL":   pref.setSummary("5"); break;
+                        }
+                    }
+                }
+            }
+            // Password – show masked summary
+            EditTextPreference passPref = findPreference("hPASSWORD");
+            if (passPref != null) {
+                String val = passPref.getText();
+                if (val != null && !val.isEmpty()) {
+                    passPref.setSummary("********");
+                } else {
+                    passPref.setSummary("Not set");
+                }
+            }
+            // Protocol dropdown
+            ListPreference protoPref = findPreference("hPROTOCOL");
+            if (protoPref != null) {
+                protoPref.setSummary(protoPref.getEntry());
+            }
         }
 
         private void setSummaryText(String[] settings) {
@@ -240,6 +308,7 @@ public class Settings extends AppCompatActivity {
 
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             setSummaries();
+            updateHttpOutputSummaries();
         }
 
         EditTextPreference.OnBindEditTextListener validatePPM = editText -> {
@@ -287,6 +356,9 @@ public class Settings extends AppCompatActivity {
         if (!SetWebViewerOutput( context)) return false;
 
         if(!SetSharing(context))  return false;
+
+        // MastChain / HTTP output – start or stop based on preferences
+        SetHttpOutput(context);
 
         return true;
     }
@@ -434,4 +506,31 @@ public class Settings extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Apply HTTP output settings – start or stop the HttpOutputManager
+     * based on current preferences. Called from {@link #Apply(Context)}.
+     */
+    static private void SetHttpOutput(Context context) {
+        boolean enabled = HttpOutputManager.isEnabled(context);
+        if (enabled) {
+            HttpOutputManager.getInstance().start(context);
+        } else {
+            HttpOutputManager.getInstance().stop();
+        }
+    }
+
+    /**
+     * Stop HTTP output (called when the receiver stops).
+     */
+    static public void StopHttpOutput() {
+        HttpOutputManager.getInstance().stop();
+    }
+
+    /**
+     * Enqueue a NMEA sentence for HTTP output.
+     * Thread-safe; called from the native NMEA callback.
+     */
+    static public void feedHttpOutput(String nmea) {
+        HttpOutputManager.getInstance().enqueueNmea(nmea);
+    }
 }

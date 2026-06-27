@@ -1,0 +1,18 @@
+                        -H/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=23
+-DANDROID_PLATFORM=android-23
+-DANDROID_ABI=arm64-v8a
+-DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
+-DANDROID_NDK=/home/wal/android-sdk/ndk/24.0.8215888
+-DCMAKE_ANDROID_NDK=/home/wal/android-sdk/ndk/24.0.8215888
+-DCMAKE_TOOLCHAIN_FILE=/home/wal/android-sdk/ndk/24.0.8215888/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/usr/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/wal/.openclaw/workspace/ais-catcher-android/app/build/intermediates/cxx/Debug/3t6u2tw4/obj/arm64-v8a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/wal/.openclaw/workspace/ais-catcher-android/app/build/intermediates/cxx/Debug/3t6u2tw4/obj/arm64-v8a
+-DCMAKE_BUILD_TYPE=Debug
+-B/home/wal/.openclaw/workspace/ais-catcher-android/app/.cxx/Debug/3t6u2tw4/arm64-v8a
+-GNinja
+                        Build command args: []
+                        Version: 2

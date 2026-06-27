@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AIS-catcher</string>
+    <string name="app_name">MastChain Mobile</string>
     <string name="license_text"><![CDATA[
 AIS-catcher for Android uses the following libraries:<P><P>
 <b>* libusb-1.0.26</<b><P>

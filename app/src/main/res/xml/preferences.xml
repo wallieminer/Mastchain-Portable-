@@ -1,6 +1,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="first_preferencescreen">
+    android:key="first_preferencescreen"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:key="system_category"
@@ -326,9 +327,9 @@
 
     </PreferenceCategory>
 
-<PreferenceCategory>
-    android:key="output_tcp_server_category"
-    android:title="Output TCP NMEA Server">
+    <PreferenceCategory
+        android:key="output_tcp_server_category"
+        android:title="Output TCP NMEA Server">
 
     <SwitchPreferenceCompat
         android:key="s1SWITCH"
@@ -340,6 +341,62 @@
         android:dependency="s1SWITCH"
         android:defaultValue="5012"
         android:title="Port"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="http_output_category"
+        android:title="MastChain Feed">
+
+        <SwitchPreferenceCompat
+            android:key="hENABLE"
+            android:summary="Send AIS data to MastChain or any HTTP endpoint"
+            android:defaultValue="false"
+            android:title="Enable HTTP Output"/>
+
+        <EditTextPreference
+            android:key="hURL"
+            android:defaultValue="https://api.mastchain.io/api/upload"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="URL"/>
+
+        <EditTextPreference
+            android:key="hUSERNAME"
+            android:defaultValue="wallieminer@protonmail.com"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Username"/>
+
+        <EditTextPreference
+            android:key="hPASSWORD"
+            android:defaultValue="6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk="
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Password"/>
+
+        <EditTextPreference
+            android:key="hSTATIONID"
+            android:defaultValue="WallieM3"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Station ID"/>
+
+        <EditTextPreference
+            android:key="hINTERVAL"
+            android:defaultValue="5"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Interval (seconds)"/>
+
+        <ListPreference
+            android:key="hPROTOCOL"
+            android:defaultValue="NMEA"
+            android:dependency="hENABLE"
+            android:dialogTitle="Protocol"
+            android:entries="@array/http_protocol_array"
+            android:entryValues="@array/http_protocol_array"
+            android:title="Protocol"/>
 
     </PreferenceCategory>
 

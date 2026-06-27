@@ -45,6 +45,15 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -96,6 +105,21 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Trust all SSL certificates globally (needed for map tiles & MastChain API)
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            }};
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+        } catch (Exception e) {
+            Log.w("MainActivity", "Global SSL bypass failed: " + e.getMessage());
+        }
 
         /* ask for permission to post notifications if needed ..... */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -416,6 +440,8 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
         @Override
         public void onNMEA ( final String line){
             //nmea_fragment.Update(line);
+            // Feed NMEA to HTTP output (MastChain etc.)
+            Settings.feedHttpOutput(line);
         }
 
         @Override
@@ -430,6 +456,7 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
 
         public void onAisServiceClosing () {
             DeviceManager.closeDevice();
+            Settings.StopHttpOutput();
             runOnUiThread(this::updateUIwithStop);
         }
 
