@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">MastChain Mobile</string>
+    <string name="mastchain_dashboard_title">MastChain Dashboard</string>
+    <string name="mastchain_station_status">Station Status</string>
+    <string name="mastchain_online">Online</string>
+    <string name="mastchain_offline">Offline</string>
+    <string name="mastchain_standby">Standby</string>
+    <string name="mastchain_messages_sent">Messages Sent</string>
+    <string name="mastchain_messages_failed">Failed</string>
+    <string name="mastchain_last_upload">Last Upload</string>
+    <string name="mastchain_community_share">Community Share</string>
+    <string name="mastchain_community_share_desc">See ships from other aiscatcher.org stations on your map</string>
+    <string name="mastchain_feed">MastChain Feed</string>
+    <string name="mastchain_feed_desc">Send your AIS data to MastChain API</string>
+    <string name="mastchain_open_dashboard">Open MastChain Dashboard</string>
+    <string name="mastchain_reset_stats">Reset Stats</string>
+    <string name="mastchain_data_source">AIS Data Source</string>
+    <string name="mastchain_no_source">No active data source</string>
+    <string name="mastchain_endpoint">MastChain Endpoint</string>
+    <string name="mastchain_default_url">https://api.mastchain.io/api/upload</string>
     <string name="license_text"><![CDATA[
 AIS-catcher for Android uses the following libraries:<P><P>
 <b>* libusb-1.0.26</<b><P>

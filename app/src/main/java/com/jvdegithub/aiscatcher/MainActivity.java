@@ -69,6 +69,7 @@ import androidx.webkit.WebViewCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jvdegithub.aiscatcher.databinding.ActivityMainBinding;
 import com.jvdegithub.aiscatcher.tools.LogBook;
+import com.jvdegithub.aiscatcher.ui.main.MastChainStatsFragment;
 import com.jvdegithub.aiscatcher.ui.main.StatisticsFragment;
 import com.jvdegithub.aiscatcher.ui.main.WebViewMapFragment;
 
@@ -100,6 +101,7 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
     boolean legacyVersion = true;
 
     private StatisticsFragment stat_fragment;
+    private MastChainStatsFragment mastchain_fragment;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -171,6 +173,9 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
                 case R.id.action_source:
                     onSource();
                     return true;
+                case R.id.action_mastchain:
+                    onMastChain();
+                    return true;
                 case R.id.action_web:
                     onWeb();
                     return true;
@@ -227,6 +232,13 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://aiscatcher.org"));
             startActivity(browserIntent);
+        }
+
+        private void onMastChain () {
+            mastchain_fragment = new MastChainStatsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, mastchain_fragment)
+                    .commit();
         }
 
         protected void AutoStart() {

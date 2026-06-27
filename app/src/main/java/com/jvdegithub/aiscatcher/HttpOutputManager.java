@@ -96,6 +96,12 @@ public class HttpOutputManager {
     private ScheduledExecutorService scheduler;
     private volatile boolean running = false;
 
+    /* ── Stats tracking ─────────────────────────────────────────────── */
+    private static int messagesSent = 0;
+    private static int messagesFailed = 0;
+    private static long lastUploadTime = 0;
+    private static boolean lastUploadSuccess = false;
+
     /* ── Config snapshot (read once at start) ─────────────────────── */
     private String url;
     private String authHeader;          // "Basic …"
@@ -113,6 +119,18 @@ public class HttpOutputManager {
     }
 
     private HttpOutputManager() { }
+
+    /* ── Stats getters ──────────────────────────────────────────────── */
+    public static int getMessagesSent() { return messagesSent; }
+    public static int getMessagesFailed() { return messagesFailed; }
+    public static long getLastUploadTime() { return lastUploadTime; }
+    public static boolean wasLastUploadSuccess() { return lastUploadSuccess; }
+    public static void resetStats() {
+        messagesSent = 0;
+        messagesFailed = 0;
+        lastUploadTime = 0;
+        lastUploadSuccess = false;
+    }
 
     /* ================================================================ *
      *  Public API                                                      *
@@ -284,9 +302,14 @@ public class HttpOutputManager {
             }
 
             int responseCode = conn.getResponseCode();
+            lastUploadTime = System.currentTimeMillis();
             if (responseCode >= 200 && responseCode < 300) {
+                messagesSent += batch.size();
+                lastUploadSuccess = true;
                 Log.d(TAG, "POST OK (" + responseCode + ") – " + batch.size() + " msgs sent");
             } else {
+                messagesFailed++;
+                lastUploadSuccess = false;
                 // Read error body for diagnostics
                 String errorBody = "";
                 try (BufferedReader br = new BufferedReader(
@@ -299,6 +322,9 @@ public class HttpOutputManager {
                 Log.w(TAG, "POST failed (" + responseCode + "): " + errorBody);
             }
         } catch (Exception e) {
+            messagesFailed++;
+            lastUploadTime = System.currentTimeMillis();
+            lastUploadSuccess = false;
             Log.e(TAG, "HTTP POST error: " + e.getMessage());
         } finally {
             if (conn != null) conn.disconnect();

@@ -15,8 +15,13 @@
         android:orderInCategory="3"
         android:title="RTLTCP" />
     <item
+        android:id="@+id/action_mastchain"
+        android:icon="@drawable/ic_baseline_mastchain_24"
+        android:orderInCategory="4"
+        android:title="MastChain" />
+    <item
         android:id="@+id/action_web"
         android:icon="@drawable/ic_baseline_web_asset_24"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="Community" />
 </menu>
