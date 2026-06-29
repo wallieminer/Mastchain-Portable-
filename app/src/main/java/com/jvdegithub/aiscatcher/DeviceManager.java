@@ -1,6 +1,7 @@
 /*
  *     AIS-catcher for Android
  *     Copyright (C)  2022-2023 jvde.github@gmail.com.
+ *     Copyright (C)  2025 MastChain – trimmed to RTL-SDR + TCP only
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -18,7 +19,6 @@
 
 package com.jvdegithub.aiscatcher;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,6 @@ import android.content.res.XmlResourceParser;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Xml;
 import androidx.core.content.ContextCompat;
@@ -44,7 +43,7 @@ public class DeviceManager {
     static Context context = null;
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 
-    enum DeviceType {NONE, RTLTCP, RTLSDR, AIRSPY, AIRSPYHF, HACKRF, SPYSERVER }
+    enum DeviceType {NONE, RTLTCP, RTLSDR }
 
     public interface DeviceCallback {
 
@@ -114,7 +113,7 @@ public class DeviceManager {
 
         AisCatcherJava.onStatus("Opening Device Connection\n");
 
-        if (devices.get(deviceIndex).type != DeviceType.RTLTCP && devices.get(deviceIndex).type != DeviceType.SPYSERVER) {
+        if (devices.get(deviceIndex).type != DeviceType.RTLTCP) {
 
             try {
                 UsbManager mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -128,10 +127,10 @@ public class DeviceManager {
                 {
                     AisCatcherJava.onStatus("No permission to USB device\n");
                     int f = 0;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                        f = PendingIntent.FLAG_MUTABLE;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
+                        f = android.app.PendingIntent.FLAG_MUTABLE;
 
-                    PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), f);
+                    android.app.PendingIntent permissionIntent = android.app.PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), f);
                     mUsbManager.requestPermission(devices.get(deviceIndex).getDevice(),permissionIntent);
                     AisCatcherJava.onStatus("Permission requested\n");
                     return -1;
@@ -156,12 +155,6 @@ public class DeviceManager {
                 return "TCP";
             case RTLSDR:
                 return "RTL-SDR";
-            case AIRSPY:
-                return "AirSpy";
-            case AIRSPYHF:
-                return "AirSpy HF+";
-            case SPYSERVER:
-                return "SpyServer";
         }
         return "Unknown";
     }
@@ -171,12 +164,6 @@ public class DeviceManager {
                 return 0;
             case RTLSDR:
                 return 1;
-            case AIRSPY:
-                return 2;
-            case AIRSPYHF:
-                return 3;
-            case SPYSERVER:
-                return 4;
         }
         return 0;
     }
@@ -185,7 +172,7 @@ public class DeviceManager {
 
         AisCatcherJava.onStatus("Closing connection\n");
 
-        if (devices.get(deviceIndex).getType() != DeviceType.RTLTCP && devices.get(deviceIndex).getType() != DeviceType.SPYSERVER && usbDeviceConnection != null) {
+        if (devices.get(deviceIndex).getType() != DeviceType.RTLTCP && usbDeviceConnection != null) {
             usbDeviceConnection.close();
         }
         usbDeviceConnection = null;
@@ -228,7 +215,6 @@ public class DeviceManager {
 
         devices.clear();
 
-        devices.add(new Device(null, "SpyServer", DeviceType.SPYSERVER, 0));
         devices.add(new Device(null, "TCP", DeviceType.RTLTCP, 0));
 
         final HashSet<Pair<Integer, Integer>> supported = getSupportedDevices();
@@ -239,14 +225,8 @@ public class DeviceManager {
             if (supported.contains(new Pair<>(device.getVendorId(), device.getProductId()))) {
 
                 Device dev;
-                if (device.getVendorId() == 7504 && device.getProductId() == 24737)
-                    dev = new Device(device, "Airspy", DeviceType.AIRSPY, device.getDeviceId());
-                else if (device.getVendorId() == 7504 && device.getProductId() == 24713)
-                    dev = new Device(device, "HackRF", DeviceType.HACKRF, device.getDeviceId());
-                else if (device.getVendorId() == 1003 && device.getProductId() == 32780)
-                    dev = new Device(device, "Airspy HF+", DeviceType.AIRSPYHF, device.getDeviceId());
-                else
-                    dev = new Device(device, "RTL-SDR", DeviceType.RTLSDR, device.getDeviceId());
+                // All supported USB devices in MastChain Mobile are RTL-SDR
+                dev = new Device(device, "RTL-SDR", DeviceType.RTLSDR, device.getDeviceId());
 
                 devices.add(dev);
             }
@@ -260,8 +240,7 @@ public class DeviceManager {
         int select = nDev - 1;
         boolean changed = true;
 
-        if (!add && (deviceType != DeviceType.RTLTCP && deviceType != DeviceType.SPYSERVER))
-        //if (!(add && deviceType == DeviceType.RTLTCP && deviceType == DeviceType.SPYSERVER))
+        if (!add && deviceType != DeviceType.RTLTCP)
             for (int i = 0; i < devices.size(); i++)
                 if (devices.get(i).getType() == deviceType && devices.get(i).getUID() == deviceUID) {
                     select = i;
@@ -302,20 +281,7 @@ public class DeviceManager {
 
         return devs;
     }
-    /*
-    public static void registerUSBBroadCast() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(ACTION_USB_PERMISSION);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            context.registerReceiver(mUsbReceiver, filter);
-        }
-    }
-    */
     public static void registerUSBBroadCast() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);

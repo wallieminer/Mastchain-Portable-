@@ -13,15 +13,10 @@
         android:id="@+id/action_source"
         android:icon="@drawable/ic_baseline_input_40"
         android:orderInCategory="3"
-        android:title="RTLTCP" />
+        android:title="RTL-SDR" />
     <item
         android:id="@+id/action_mastchain"
         android:icon="@drawable/ic_baseline_mastchain_24"
         android:orderInCategory="4"
         android:title="MastChain" />
-    <item
-        android:id="@+id/action_web"
-        android:icon="@drawable/ic_baseline_web_asset_24"
-        android:orderInCategory="5"
-        android:title="Community" />
 </menu>

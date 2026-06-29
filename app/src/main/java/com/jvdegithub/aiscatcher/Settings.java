@@ -1,7 +1,7 @@
 /*
  *     AIS-catcher for Android
  *     Copyright (C)  2022-2023 jvde.github@gmail.com.
- *     Copyright (C)  2025 MastChain HTTP output integration additions
+ *     Copyright (C)  2025 MastChain – trimmed to RTL-SDR + TCP only
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -63,9 +63,6 @@ public class Settings extends AppCompatActivity {
         preferences.edit().putBoolean("sAUTOSTART", false).commit();
         preferences.edit().putBoolean("sKEEPSCREENON", false).commit();
 
-        preferences.edit().putBoolean("w1SWITCH", false).commit();
-        preferences.edit().putString("w1PORT", "8100").commit();
-
         preferences.edit().putString("oCGF_WIDE", "Default").commit();
         preferences.edit().putString("oMODEL_TYPE", "Default").commit();
         preferences.edit().putBoolean("oFP_DS", false).commit();
@@ -83,39 +80,13 @@ public class Settings extends AppCompatActivity {
         preferences.edit().putString("tHOST", "localhost").commit();
         preferences.edit().putString("tPORT", "12345").commit();
 
-        preferences.edit().putString("sRATE", "96K").commit();
-        preferences.edit().putString("sHOST", "localhost").commit();
-        preferences.edit().putString("sPORT", "5555").commit();
-        preferences.edit().putInt("sGAIN", 14).commit();
-
         preferences.edit().putBoolean("u1SWITCH", true).commit();
         preferences.edit().putString("u1HOST", "127.0.0.1").commit();
         preferences.edit().putString("u1PORT", "10110").commit();
         preferences.edit().putBoolean("u1JSON", false).commit();
 
-        preferences.edit().putBoolean("u2SWITCH", false).commit();
-        preferences.edit().putString("u2HOST", "127.0.0.1").commit();
-        preferences.edit().putString("u2PORT", "10111").commit();
-        preferences.edit().putBoolean("u2JSON", false).commit();
-
-        preferences.edit().putBoolean("u3SWITCH", false).commit();
-        preferences.edit().putString("u3HOST", "127.0.0.1").commit();
-        preferences.edit().putString("u3PORT", "10111").commit();
-        preferences.edit().putBoolean("u3JSON", false).commit();
-
-        preferences.edit().putBoolean("u4SWITCH", false).commit();
-        preferences.edit().putString("u4HOST", "127.0.0.1").commit();
-        preferences.edit().putString("u4PORT", "10111").commit();
-        preferences.edit().putBoolean("u4JSON", false).commit();
-
         preferences.edit().putBoolean("s1SWITCH", false).commit();
         preferences.edit().putString("s1PORT", "5012").commit();
-
-        preferences.edit().putInt("mLINEARITY", 17).commit();
-        preferences.edit().putString("mRATE", "2500K").commit();
-        preferences.edit().putBoolean("mBIASTEE", false).commit();
-
-        preferences.edit().putString("hRATE", "192K").commit();
 
         // MastChain / HTTP output defaults
         preferences.edit().putBoolean("hENABLE", false).commit();
@@ -148,23 +119,12 @@ public class Settings extends AppCompatActivity {
             // Load the preferences from an XML resource
             setPreferencesFromResource(R.xml.preferences, rootKey);
 
-            ((EditTextPreference) getPreferenceManager().findPreference("sHOST")).setOnBindEditTextListener(validateIP);
-            ((EditTextPreference) getPreferenceManager().findPreference("sPORT")).setOnBindEditTextListener(validatePort);
-            ((EditTextPreference) getPreferenceManager().findPreference("w1PORT")).setOnBindEditTextListener(validatePort);;
-            ((SeekBarPreference) getPreferenceManager().findPreference("sGAIN")).setUpdatesContinuously(true);
             ((EditTextPreference) getPreferenceManager().findPreference("tPORT")).setOnBindEditTextListener(validatePort);
-            ((EditTextPreference) getPreferenceManager().findPreference("rFREQOFFSET")).setOnBindEditTextListener(validatePPM);
             ((EditTextPreference) getPreferenceManager().findPreference("tHOST")).setOnBindEditTextListener(validateIP);
             ((EditTextPreference) getPreferenceManager().findPreference("u1HOST")).setOnBindEditTextListener(validateIP);
-            ((EditTextPreference) getPreferenceManager().findPreference("u2HOST")).setOnBindEditTextListener(validateIP);
-            ((EditTextPreference) getPreferenceManager().findPreference("u3HOST")).setOnBindEditTextListener(validateIP);
-            ((EditTextPreference) getPreferenceManager().findPreference("u4HOST")).setOnBindEditTextListener(validateIP);
             ((EditTextPreference) getPreferenceManager().findPreference("u1PORT")).setOnBindEditTextListener(validatePort);
-            ((EditTextPreference) getPreferenceManager().findPreference("u2PORT")).setOnBindEditTextListener(validatePort);
-            ((EditTextPreference) getPreferenceManager().findPreference("u3PORT")).setOnBindEditTextListener(validatePort);
-            ((EditTextPreference) getPreferenceManager().findPreference("u4PORT")).setOnBindEditTextListener(validatePort);
             ((EditTextPreference) getPreferenceManager().findPreference("s1PORT")).setOnBindEditTextListener(validatePort);
-            ((SeekBarPreference) getPreferenceManager().findPreference("mLINEARITY")).setUpdatesContinuously(true);
+            ((EditTextPreference) getPreferenceManager().findPreference("rFREQOFFSET")).setOnBindEditTextListener(validatePPM);
 
             // HTTP output preference input validators
             EditTextPreference hIntervalPref = findPreference("hINTERVAL");
@@ -190,9 +150,8 @@ public class Settings extends AppCompatActivity {
         }
 
         private void setSummaries() {
-            setSummaryText(new String[]{"w1PORT","tPORT","tHOST","sPORT","sHOST","u1HOST","u1PORT","u2HOST","u2PORT", "u3HOST","u3PORT", "u4HOST","u4PORT", "s1PORT", "rFREQOFFSET", "sSHARINGKEY"});
-            setSummaryList(new String[]{"rTUNER","rRATE","sRATE","tRATE","tPROTOCOL","tTUNER","mRATE","hRATE","oMODEL_TYPE","oCGF_WIDE"});
-            setSummarySeekbar(new String[]{"mLINEARITY", "sGAIN"});
+            setSummaryText(new String[]{"tPORT","tHOST","u1HOST","u1PORT", "s1PORT", "rFREQOFFSET", "sSHARINGKEY"});
+            setSummaryList(new String[]{"rTUNER","rRATE","tRATE","tPROTOCOL","tTUNER","oMODEL_TYPE","oCGF_WIDE"});
         }
 
         /**
@@ -245,13 +204,6 @@ public class Settings extends AppCompatActivity {
             for (String s : settings) {
                 ListPreference e = findPreference(s);
                 e.setSummary(e.getEntry());
-            }
-        }
-
-        private void setSummarySeekbar(String[] settings) {
-            for(String s:settings) {
-                SeekBarPreference e = findPreference(s);
-                e.setSummary(String.valueOf(e.getValue()));
             }
         }
 
@@ -338,22 +290,16 @@ public class Settings extends AppCompatActivity {
 
     static public boolean Apply(Context context) {
 
-        if (!SetDevice(new String[]{"rRATE", "rTUNER", "rFREQOFFSET", "sRATE", "sPORT", "sHOST", "tRATE", "tPROTOCOL","tTUNER", "tHOST", "tPORT", "mRATE", "hRATE"}, context))
+        if (!SetDevice(new String[]{"rRATE", "rTUNER", "rFREQOFFSET", "tRATE", "tPROTOCOL","tTUNER", "tHOST", "tPORT"}, context))
             return false;
-        if (!SetDeviceBoolean(new String[]{"rRTLAGC", "rBIASTEE", "mBIASTEE"}, "ON", "OFF", context))
+        if (!SetDeviceBoolean(new String[]{"rRTLAGC", "rBIASTEE"}, "ON", "OFF", context))
             return false;
-        if (!SetDeviceInteger(new String[]{"mLINEARITY", "sGAIN"}, context)) return false;
 
         if(!SetRTLbandwidth(context)) return false;
 
         if (!SetUDPoutput("u1", context)) return false;
-        if (!SetUDPoutput("u2", context)) return false;
-        if (!SetUDPoutput("u3", context)) return false;
-        if (!SetUDPoutput("u4", context)) return false;
 
         if (!SetTCPListener(context)) return false;
-
-        if (!SetWebViewerOutput( context)) return false;
 
         if(!SetSharing(context))  return false;
 
@@ -437,18 +383,6 @@ public class Settings extends AppCompatActivity {
         return true;
     }
 
-    static private boolean SetDeviceInteger(String[] settings, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        for (String s : settings) {
-            String p = String.valueOf(preferences.getInt(s, 0));
-            if (Objects.equals(p, "")) return false;
-            if (AisCatcherJava.applySetting(s.substring(0, 1), s.substring(1), p) != 0)
-                return false;
-        }
-        return true;
-    }
-
     static private boolean SetUDPoutput(String s, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -472,18 +406,6 @@ public class Settings extends AppCompatActivity {
             String port = preferences.getString("s1PORT", "");
 
             return AisCatcherJava.createTCPlistener( port) == 0;
-
-        }
-        return true;
-    }
-
-    static private boolean SetWebViewerOutput(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        boolean b = preferences.getBoolean("w1SWITCH", false);
-        if (b) {
-            String port = preferences.getString("w1PORT", "");
-            return AisCatcherJava.createWebViewer(port) == 0;
 
         }
         return true;

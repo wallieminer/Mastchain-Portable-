@@ -183,9 +183,6 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
                 case R.id.action_mastchain:
                     onMastChain();
                     return true;
-                case R.id.action_web:
-                    onWeb();
-                    return true;
             }
             return false;
         });
@@ -230,12 +227,6 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
                 AppCompatDelegate.setDefaultNightMode(sForceDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
 
-        private void onWeb () {
-
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://aiscatcher.org"));
-            startActivity(browserIntent);
-        }
-
         private void onMastChain () {
             mastchain_fragment = new MastChainStatsFragment();
             getSupportFragmentManager().beginTransaction()
@@ -273,9 +264,7 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
 
         protected void AutoStart() {
             if(!Settings.getAutoStart(this)) return;
-            if(DeviceManager.getDeviceType() != DeviceManager.DeviceType.RTLSDR &&
-                    DeviceManager.getDeviceType() != DeviceManager.DeviceType.AIRSPY &&
-                    DeviceManager.getDeviceType() != DeviceManager.DeviceType.AIRSPYHF)
+            if(DeviceManager.getDeviceType() != DeviceManager.DeviceType.RTLSDR)
                 return;
 
             if (!AisService.isRunning(getApplicationContext())) {
