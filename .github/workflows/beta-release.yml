@@ -37,6 +37,9 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
+    - name: Rename APK
+      run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mastchain-portable.apk
+
     - name: Get version info
       id: version
       run: |
@@ -86,4 +89,4 @@ jobs:
           ---
           *Built on a Nintendo Switch (SwitchClaw) and Steam Deck (SteamClaw)*
         files: |
-          app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/debug/mastchain-portable.apk
