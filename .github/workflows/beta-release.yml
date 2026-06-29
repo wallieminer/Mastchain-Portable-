@@ -30,23 +30,16 @@ jobs:
     - name: Install Ninja
       run: sudo apt-get update && sudo apt-get install -y ninja-build
 
+    - name: Install NDK
+      run: "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;24.0.8215888" || true
+
     - name: Set permissions for gradlew
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: |
-        ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
-        echo "BUILD_EXIT=$?"
+      run: ./gradlew assembleDebug --stacktrace
 
-    - name: Upload build log on failure
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log
-        path: build-output.log
-        retention-days: 5
-
-    - name: Rename and prepare APK
+    - name: Rename APK
       run: |
         APK=$(find app/build/outputs/apk -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
@@ -73,7 +66,7 @@ jobs:
       with:
         tag_name: ${{ steps.version.outputs.tag }}
         name: MastChain Portable ${{ steps.version.outputs.tag }} 🚢
-        prereise: true
+        prerelease: true
         body: |
           ## 🚢 MastChain Portable ${{ steps.version.outputs.tag }}
 
@@ -93,6 +86,6 @@ jobs:
           5. Start tracking ships! 🚢
 
           ---
-          *Built on a Nintendo Switch (SwitchClaw) and Steam Deck (SteamClaw)*
+          *Built on SteamClaw (Steam Deck) and SwitchClaw (Nintendo Switch)*
         files: |
           mastchain-portable.apk
