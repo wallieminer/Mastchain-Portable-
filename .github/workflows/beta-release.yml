@@ -23,32 +23,32 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update && sudo apt-get install -y ninja-build
-        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;24.0.8215888" || true
+    - name: Install Ninja
+      run: sudo apt-get update && sudo apt-get install -y ninja-build
 
     - name: Set permissions for gradlew
       run: chmod +x gradlew
 
     - name: Build Debug APK
+      run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
+
+    - name: Show build result
+      if: always()
       run: |
-        set -o pipefail
-        ./gradlew assembleDebug 2>&1 | tail -200
+        echo "=== Build log tail ==="
+        tail -100 build.log || true
+        echo "=== Searching for APK ==="
+        find app/build/outputs -name '*.apk' -type f 2>/dev/null || true
+        echo "=== Done ==="
 
     - name: Find APK
       id: apk
       run: |
-        echo "=== Searching for APK ==="
-        find . -name '*.apk' -type f 2>/dev/null || true
-        echo "=== Checking app/build/outputs ==="
-        ls -laR app/build/outputs/ 2>/dev/null || echo "No outputs dir"
-        APK=$(find app/build/outputs -name '*.apk' -type f 2>/dev/null | head -1)
+        APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
           echo "ERROR: No APK found!"
           exit 1
@@ -81,7 +81,7 @@ jobs:
           ### ✨ What's New
           - 📍 GPS + H3 Hex — FusedLocation provider with H3 hex (resolution 5)
           - 🔙 Back Navigation Fix — MastChain tab back stack works properly
-          - 🧹 MastChain-only Cleanup — Removed Airspy, HackRF, SpyServer
+          - 🧹 MastChain-only Cleanup — Removed Airspy, HackRF, SpyServer from Java/UI
           - 📊 MastChain Dashboard V2 — Real data, MastChain theme
 
           ### 📲 How to Install
