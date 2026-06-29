@@ -38,22 +38,24 @@ jobs:
 
     - name: Build Debug APK
       run: |
-        ./gradlew assembleDebug 2>&1 | tail -100
-        echo "EXIT_CODE=$?"
+        set -o pipefail
+        ./gradlew assembleDebug 2>&1 | tail -200
 
     - name: Find APK
       id: apk
       run: |
         echo "=== Searching for APK ==="
-        find app/build/outputs -name '*.apk' -type f || echo "No APKs found"
-        APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
+        find . -name '*.apk' -type f 2>/dev/null || true
+        echo "=== Checking app/build/outputs ==="
+        ls -laR app/build/outputs/ 2>/dev/null || echo "No outputs dir"
+        APK=$(find app/build/outputs -name '*.apk' -type f 2>/dev/null | head -1)
         if [ -z "$APK" ]; then
-          echo "ERROR: No APK found"
-          find app/build/outputs -type f | head -50
+          echo "ERROR: No APK found!"
           exit 1
         fi
         echo "Found: $APK"
         cp "$APK" mastchain-portable.apk
+        ls -la mastchain-portable.apk
 
     - name: Get version info
       id: version
