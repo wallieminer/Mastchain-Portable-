@@ -165,7 +165,7 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
             onOpening();
         }
 
-        locationHelper = new LocationHelper(this);
+        locationHelper = LocationHelper.getInstance(this);
         locationHelper.requestLocationUpdates();
 
         bottomNavigationView = binding.bottombar;

@@ -424,11 +424,11 @@ public class MastChainStatsFragment extends Fragment {
      * ════════════════════════════════════════════════════════════ */
 
     private void updateLocation() {
-        double lat = LocationHelper.getLatitude();
-        double lon = LocationHelper.getLongitude();
-        float acc = LocationHelper.getAccuracy();
-        long fixTime = LocationHelper.getLastFixTime();
-        String h3 = LocationHelper.getH3Hex();
+        double lat = LocationHelper.sLatitude();
+        double lon = LocationHelper.sLongitude();
+        float acc = LocationHelper.sAccuracy();
+        long fixTime = LocationHelper.sLastFixTime();
+        String h3 = LocationHelper.sH3Hex();
 
         if (locLatLon != null) {
             if (Double.isNaN(lat) || Double.isNaN(lon)) {
@@ -479,7 +479,7 @@ public class MastChainStatsFragment extends Fragment {
      * ════════════════════════════════════════════════════════════ */
 
     private void updateHexCoverage() {
-        String h3 = LocationHelper.getH3Hex();
+        String h3 = LocationHelper.sH3Hex();
 
         if (hexList != null) {
             if (h3 == null || h3.isEmpty()) {
@@ -496,7 +496,7 @@ public class MastChainStatsFragment extends Fragment {
 
         // tMAST estimate: just show placeholder since we can't know station overlap
         if (hexTmastTotal != null) {
-            boolean hasFix = LocationHelper.hasFix();
+            boolean hasFix = LocationHelper.sHasFix();
             hexTmastTotal.setText(hasFix ? "see dashboard" : "0.000");
         }
     }

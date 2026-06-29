@@ -205,6 +205,44 @@ public class LocationHelper {
         return (elapsed / 3_600_000) + "h ago";
     }
 
+    /* ── Static convenience methods for easy access from fragments ─── */
+
+    /** Get latitude from singleton, NaN if no instance or no fix. */
+    public static double sLatitude() {
+        LocationHelper h = getInstance();
+        return h != null ? h.getLatitude() : Double.NaN;
+    }
+
+    /** Get longitude from singleton, NaN if no instance or no fix. */
+    public static double sLongitude() {
+        LocationHelper h = getInstance();
+        return h != null ? h.getLongitude() : Double.NaN;
+    }
+
+    /** Get accuracy from singleton, NaN if no instance or no fix. */
+    public static float sAccuracy() {
+        LocationHelper h = getInstance();
+        return h != null ? h.getAccuracy() : Float.NaN;
+    }
+
+    /** Get last fix time from singleton, 0 if no instance. */
+    public static long sLastFixTime() {
+        LocationHelper h = getInstance();
+        return h != null ? h.getLastFixTime() : 0;
+    }
+
+    /** Get H3 hex ID from singleton, empty string if no instance. */
+    public static String sH3Hex() {
+        LocationHelper h = getInstance();
+        return h != null ? h.getH3HexId() : "";
+    }
+
+    /** Check if singleton has a GPS fix. */
+    public static boolean sHasFix() {
+        LocationHelper h = getInstance();
+        return h != null && h.hasFix();
+    }
+
     /* ================================================================ *
      *  Permissions                                                      *
      * ================================================================ */
