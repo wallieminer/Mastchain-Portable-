@@ -31,6 +31,14 @@ jobs:
     - name: Install Ninja
       run: sudo apt-get update && sudo apt-get install -y ninja-build
 
+    - name: Install NDK 24.0.8215888
+      run: |
+        echo "Installing NDK 24.0.8215888..."
+        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;24.0.8215888" || \
+        "$ANDROID_HOME/tools/bin/sdkmanager" "ndk;24.0.8215888" || \
+        echo "Trying default NDK..."
+        ls -la "$ANDROID_HOME/ndk/" 2>/dev/null || true
+
     - name: Set permissions for gradlew
       run: chmod +x gradlew
 
@@ -50,20 +58,26 @@ jobs:
         ls -la app/src/main/jni/
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace 2>&1 | tail -100
+      run: ./gradlew assembleDebug --stacktrace
 
     - name: Find and rename APK
       run: |
-        echo "Listing APK files:"
-        find app/build/outputs/apk -name '*.apk' -type f
-        APK=$(find app/build/outputs/apk -name '*.apk' -type f | head -1)
+        echo "=== Full APK tree ==="
+        find app/build/outputs -name '*.apk' -type f || echo "find returned nothing"
+        echo "=== Checking debug dir ==="
+        ls -la app/build/outputs/apk/debug/ 2>/dev/null || echo "No debug dir"
+        ls -la app/build/outputs/apk/ 2>/dev/null || echo "No apk dir"
+        APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
-          echo "ERROR: No APK found!"
+          echo "ERROR: No APK found anywhere in app/build/outputs!"
+          echo "=== Full build outputs ==="
+          find app/build/outputs -type f 2>/dev/null | head -50
           exit 1
         fi
         echo "Found APK: $APK"
         mkdir -p app/build/outputs/apk/debug
         cp "$APK" app/build/outputs/apk/debug/mastchain-portable.apk
+        ls -la app/build/outputs/apk/debug/mastchain-portable.apk
 
     - name: Get version info
       id: version
