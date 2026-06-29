@@ -52,8 +52,18 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug --stacktrace 2>&1 | tail -100
 
-    - name: Rename APK
-      run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/mastchain-portable.apk
+    - name: Find and rename APK
+      run: |
+        echo "Listing APK files:"
+        find app/build/outputs/apk -name '*.apk' -type f
+        APK=$(find app/build/outputs/apk -name '*.apk' -type f | head -1)
+        if [ -z "$APK" ]; then
+          echo "ERROR: No APK found!"
+          exit 1
+        fi
+        echo "Found APK: $APK"
+        mkdir -p app/build/outputs/apk/debug
+        cp "$APK" app/build/outputs/apk/debug/mastchain-portable.apk
 
     - name: Get version info
       id: version
@@ -86,7 +96,7 @@ jobs:
           - 🤝 **Community Share Toggle** — Share your AIS data with other MastChain stations
 
           ### 📲 How to Install
-          1. Download `app-debug.apk` below
+          1. Download `mastchain-portable.apk` below
           2. Enable "Install from unknown sources" on your Android device
           3. Install the APK
           4. Connect an RTL-SDR dongle via USB OTG
