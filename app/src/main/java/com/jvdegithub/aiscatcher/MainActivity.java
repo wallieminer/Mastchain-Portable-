@@ -104,6 +104,12 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
     private MastChainStatsFragment mastchain_fragment;
     private BottomNavigationView bottomNavigationView;
 
+    // Fragment navigation state
+    private static final String VIEW_MAP = "map";
+    private static final String VIEW_STATS = "stats";
+    private static final String VIEW_MASTCHAIN = "mastchain";
+    private String currentView = null;  // null means the default view (map or stats)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +159,7 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        currentView = legacyVersion ? VIEW_STATS : VIEW_MAP;
 
         if(Settings.setDefaultOnFirst(this)) {
             onOpening();
@@ -233,7 +240,35 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
             mastchain_fragment = new MastChainStatsFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, mastchain_fragment)
+                    .addToBackStack(VIEW_MASTCHAIN)
                     .commit();
+            currentView = VIEW_MASTCHAIN;
+        }
+
+        /** Switch back to the default view (map or stats). */
+        private void switchToDefaultView() {
+            Fragment fragment;
+            if (legacyVersion) {
+                if (stat_fragment == null) stat_fragment = new StatisticsFragment();
+                fragment = stat_fragment;
+                currentView = VIEW_STATS;
+            } else {
+                fragment = new WebViewMapFragment();
+                currentView = VIEW_MAP;
+            }
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+        }
+
+        @Override
+        public void onBackPressed() {
+            // If on MastChain view, go back to default
+            if (VIEW_MASTCHAIN.equals(currentView)) {
+                switchToDefaultView();
+                return;
+            }
+            super.onBackPressed();
         }
 
         protected void AutoStart() {
