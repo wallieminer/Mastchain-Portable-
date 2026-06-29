@@ -58,7 +58,14 @@ jobs:
         ls -la app/src/main/jni/
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+      run: |
+        echo "Starting Gradle build..."
+        ./gradlew assembleDebug --stacktrace 2>&1 | tee build-output.log
+        echo "=== Build exit code: $? ==="
+        echo "=== Last 100 lines of build output ==="
+        tail -100 build-output.log
+        echo "=== Check for APK ==="
+        find app/build/outputs -name '*.apk' -type f 2>/dev/null || echo 'No APK found'
 
     - name: Find and rename APK
       run: |
