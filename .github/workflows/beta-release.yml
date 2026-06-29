@@ -38,13 +38,13 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: |
-        ./gradlew assembleDebug 2>&1 | tail -200
-        echo "=== APK search ==="
-        find app/build/outputs -name '*.apk' -type f 2>/dev/null || true
+      run: ./gradlew assembleDebug
 
-    - name: Find and rename APK
+    - name: Find APK
+      id: apk
       run: |
+        echo "=== Looking for APK ==="
+        find app/build/outputs -name '*.apk' -type f 2>/dev/null || true
         APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
           echo "ERROR: No APK found!"
@@ -52,9 +52,8 @@ jobs:
           exit 1
         fi
         echo "Found APK: $APK"
-        mkdir -p app/build/outputs/apk/debug
-        cp "$APK" app/build/outputs/apk/debug/mastchain-portable.apk
-        ls -la app/build/outputs/apk/debug/mastchain-portable.apk
+        cp "$APK" mastchain-portable.apk
+        echo "path=mastchain-portable.apk" >> $GITHUB_OUTPUT
 
     - name: Get version info
       id: version
@@ -98,4 +97,4 @@ jobs:
           ---
           *Built on a Nintendo Switch (SwitchClaw) and Steam Deck (SteamClaw)*
         files: |
-          app/build/outputs/apk/debug/mastchain-portable.apk
+          mastchain-portable.apk
