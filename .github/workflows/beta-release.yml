@@ -32,28 +32,28 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install -y ninja-build
         "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;24.0.8215888" || true
-        ls -la "$ANDROID_HOME/ndk/" 2>/dev/null || true
 
     - name: Set permissions for gradlew
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      run: |
+        ./gradlew assembleDebug 2>&1 | tail -100
+        echo "EXIT_CODE=$?"
 
     - name: Find APK
       id: apk
       run: |
-        echo "=== Looking for APK ==="
-        find app/build/outputs -name '*.apk' -type f 2>/dev/null || true
+        echo "=== Searching for APK ==="
+        find app/build/outputs -name '*.apk' -type f || echo "No APKs found"
         APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
-          echo "ERROR: No APK found!"
-          find app/build/outputs -type f 2>/dev/null | head -50
+          echo "ERROR: No APK found"
+          find app/build/outputs -type f | head -50
           exit 1
         fi
-        echo "Found APK: $APK"
+        echo "Found: $APK"
         cp "$APK" mastchain-portable.apk
-        echo "path=mastchain-portable.apk" >> $GITHUB_OUTPUT
 
     - name: Get version info
       id: version
@@ -77,22 +77,17 @@ jobs:
           **Beta Release** — Built on ${{ steps.version.outputs.date }} from commit `${{ steps.version.outputs.sha }}`
 
           ### ✨ What's New
-          - 📍 **GPS + H3 Hex** — FusedLocation provider with H3 hex (resolution 5)
-          - 🔙 **Back Navigation Fix** — MastChain tab back stack works properly
-          - 🧹 **MastChain-only Cleanup** — Removed Airspy, HackRF, SpyServer
-          - 📊 **MastChain Dashboard V2** — Real data, MastChain theme
-          - 🔧 **Renamed APK** to mastchain-portable.apk
+          - 📍 GPS + H3 Hex — FusedLocation provider with H3 hex (resolution 5)
+          - 🔙 Back Navigation Fix — MastChain tab back stack works properly
+          - 🧹 MastChain-only Cleanup — Removed Airspy, HackRF, SpyServer
+          - 📊 MastChain Dashboard V2 — Real data, MastChain theme
 
           ### 📲 How to Install
-          1. Download `mastchain-portable.apk` below
+          1. Download mastchain-portable.apk below
           2. Enable "Install from unknown sources" on your Android device
           3. Install the APK
           4. Connect an RTL-SDR dongle via USB OTG
-          5. Go to **Settings → MastChain Feed** and enter your credentials
-          6. Start tracking ships! 🚢
-
-          ### ⚠️ Beta Notice
-          This is a **beta release**. Report issues at [GitHub Issues](https://github.com/wallieminer/Mastchain-Portable-/issues).
+          5. Start tracking ships! 🚢
 
           ---
           *Built on a Nintendo Switch (SwitchClaw) and Steam Deck (SteamClaw)*
