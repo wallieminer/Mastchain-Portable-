@@ -6,3 +6,4 @@ app/.cxx/
 local.properties
 .idea/
 *.iml
+.gradle/
