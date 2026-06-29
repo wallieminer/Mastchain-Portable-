@@ -1,21 +1,25 @@
 /*
- *     MastChain Mobile – MastChain Dashboard Fragment
+ *     MastChain Mobile – MastChainStatsFragment
  *     Copyright (C)  2025 MastChain integration additions
  *
- *     Displays station status, uptime, live reception, GPS location,
- *     H3 hex coverage, upload stats, and bond/withdrawal info.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
  *
- *     Colors follow the MastChain design system:
- *     --mc-bg-deep:#0A0E14, --mc-bg-panel:#121821, --mc-orange:#F26A1B,
- *     --mc-cyan:#00C2D1, --mc-green:#29C46A, --mc-yellow:#E5B53A,
- *     --mc-red:#E5484D, --mc-text:#E6EAF0, --mc-text-dim:#8A94A6
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package com.jvdegithub.aiscatcher.ui.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,10 +34,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.button.MaterialButton;
 import com.jvdegithub.aiscatcher.AisCatcherJava;
 import com.jvdegithub.aiscatcher.AisService;
 import com.jvdegithub.aiscatcher.DeviceManager;
@@ -44,102 +48,73 @@ import com.jvdegithub.aiscatcher.Settings;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
- * MastChain Dashboard with real data from AIS decoder, GPS, and HTTP upload.
+ * MastChain Dashboard fragment showing station status, uptime, reception,
+ * GPS/H3 hex, coverage, upload stats, bond info, and toggles.
  *
- * Sections (top to bottom):
- * 1. Header: station ID + online status
- * 2. Uptime: 288-slot bar, percentage, warning
- * 3. Live Reception: total messages, vessels, channel A/B, msg/min
- * 4. Location & Hex: GPS lat/lon, accuracy, H3 hex ID
- * 5. Hex Coverage: hex list with progress, color, tMAST estimate
- * 6. Upload: sent/failed/last upload, endpoint
- * 7. Bond & Withdrawal: bond status, explanation
- * 8. Buttons: Open Dashboard, Reset Stats
+ * Color theme:
+ *   bg-deep: #0A0E14, bg-panel: #121821, bg-elev: #1A2230
+ *   orange: #F26A1B, orange-dk: #C9540F, cyan: #00C2D1
+ *   green: #29C46A, yellow: #E5B53A, red: #E5484D
+ *   text: #E6EAF0, text-dim: #8A94A6, line: #232C3A
  */
 public class MastChainStatsFragment extends Fragment {
 
-    private static final String TAG = "MastChainStats";
-    private static final long REFRESH_INTERVAL_MS = 5_000; // 5 seconds
-    private static final String STATION_DASHBOARD_URL = "https://app.mastchain.io/app/dashboard/880";
+    private static final String TAG = "MastChain-Dashboard";
+    private static final long REFRESH_INTERVAL_MS = 5_000;  // 5 seconds
+    private static final String DASHBOARD_URL = "https://app.mastchain.io/app/dashboard/880";
 
-    /* ── MastChain Colors ──────────────────────────────────────────── */
-    private static final int COLOR_BG_DEEP = Color.parseColor("#0A0E14");
-    private static final int COLOR_BG_PANEL = Color.parseColor("#121821");
-    private static final int COLOR_BG_ELEV = Color.parseColor("#1A2230");
-    private static final int COLOR_ORANGE = Color.parseColor("#F26A1B");
-    private static final int COLOR_ORANGE_DK = Color.parseColor("#C9540F");
-    private static final int COLOR_CYAN = Color.parseColor("#00C2D1");
-    private static final int COLOR_GREEN = Color.parseColor("#29C46A");
-    private static final int COLOR_YELLOW = Color.parseColor("#E5B53A");
-    private static final int COLOR_RED = Color.parseColor("#E5484D");
-    private static final int COLOR_TEXT = Color.parseColor("#E6EAF0");
-    private static final int COLOR_TEXT_DIM = Color.parseColor("#8A94A6");
-    private static final int COLOR_LINE = Color.parseColor("#232C3A");
-
-    /* ── H3 / MastChain reward constants ───────────────────────────── */
+    // MastChain rules
     private static final double TMAST_PER_HEX = 0.223;
     private static final int HEX_ELIGIBLE_THRESHOLD = 500;
+    private static final int DAY_SLOTS = 288;  // 5-min slots per day
+    private static final double UPTIME_THRESHOLD = 0.80;
 
-    /* ── Uptime tracking ───────────────────────────────────────────── */
-    private static final int SLOTS_PER_DAY = 288; // 5-minute slots in 24 hours
-    private static final long SLOT_DURATION_MS = 5 * 60 * 1000L;
-    private final boolean[] uptimeSlots = new boolean[SLOTS_PER_DAY];
-    private long sessionStartTime = 0;
-    private long lastUploadSlotTime = 0;
+    /* ── Views ─────────────────────────────────────────────── */
+    // Header
+    private View onlineDot;
+    private TextView headerStationId;
+    private TextView headerStatusLabel;
 
-    /* ── Hex coverage tracking ─────────────────────────────────────── */
-    private final Map<String, HexInfo> hexMap = new HashMap<>();
-    private long msgCountAtLastRefresh = 0;
+    // Uptime
+    private TextView uptimePercent;
+    private LinearLayout uptimeBarContainer;
 
-    /* ── Views ─────────────────────────────────────────────────────── */
-    private View statusIndicator;
-    private TextView statusText;
-    private TextView stationIdText;
-    private TextView uptimePercentage;
-    private LinearLayout uptimeBar;
-    private TextView uptimeWarning;
-    private TextView totalMessagesText;
-    private TextView vesselsSeenText;
-    private TextView channelABText;
-    private TextView msgPerMinText;
-    private TextView gpsStatusText;
-    private TextView gpsLastFixText;
-    private TextView latitudeText;
-    private TextView longitudeText;
-    private TextView accuracyText;
-    private TextView hexIdText;
-    private TextView hexListText;
-    private TextView estimatedTmastText;
-    private TextView messagesSentText;
-    private TextView messagesFailedText;
-    private TextView lastUploadText;
-    private TextView endpointUrlText;
-    private TextView bondStatusText;
+    // Live Reception
+    private TextView rxTotal;
+    private TextView rxVessels;
+    private TextView rxChA;
+    private TextView rxChB;
+    private TextView rxMsgMin;
+
+    // Location & Hex
+    private TextView locLatLon;
+    private TextView locAccuracy;
+    private TextView locFixTime;
+    private TextView locH3Hex;
+
+    // Hex Coverage
+    private TextView hexList;
+    private TextView hexTmastTotal;
+
+    // Upload
+    private TextView uploadSent;
+    private TextView uploadFailed;
+    private TextView uploadLast;
+    private TextView uploadEndpoint;
+
+    // Toggles
     private SwitchCompat communityShareToggle;
     private SwitchCompat mastchainFeedToggle;
 
     private final Handler refreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable refreshRunnable = this::refreshStats;
 
-    /* ── Hex info for coverage tracking ────────────────────────────── */
-    private static class HexInfo {
-        int messageCount;
-        long firstSeen;
-        long lastSeen;
-        int stationCount; // 1 = green, >1 = yellow with N
-
-        HexInfo() {
-            messageCount = 0;
-            firstSeen = System.currentTimeMillis();
-            lastSeen = firstSeen;
-            stationCount = 1;
-        }
-    }
+    /* ── Uptime tracking ───────────────────────────────────── */
+    private long sessionStartTime = 0;
+    private int onlineSlotCount = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -152,93 +127,88 @@ public class MastChainStatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Section 1: Header
-        statusIndicator = view.findViewById(R.id.status_indicator);
-        statusText = view.findViewById(R.id.status_text);
-        stationIdText = view.findViewById(R.id.station_id_text);
+        // Header
+        onlineDot = view.findViewById(R.id.online_dot);
+        headerStationId = view.findViewById(R.id.header_station_id);
+        headerStatusLabel = view.findViewById(R.id.header_status_label);
 
-        // Section 2: Uptime
-        uptimePercentage = view.findViewById(R.id.uptime_percentage);
-        uptimeBar = view.findViewById(R.id.uptime_bar);
-        uptimeWarning = view.findViewById(R.id.uptime_warning);
+        // Uptime
+        uptimePercent = view.findViewById(R.id.uptime_percent);
+        uptimeBarContainer = view.findViewById(R.id.uptime_bar_container);
 
-        // Section 3: Live Reception
-        totalMessagesText = view.findViewById(R.id.total_messages_text);
-        vesselsSeenText = view.findViewById(R.id.vessels_seen_text);
-        channelABText = view.findViewById(R.id.channel_ab_text);
-        msgPerMinText = view.findViewById(R.id.msg_per_min_text);
+        // Live Reception
+        rxTotal = view.findViewById(R.id.rx_total);
+        rxVessels = view.findViewById(R.id.rx_vessels);
+        rxChA = view.findViewById(R.id.rx_ch_a);
+        rxChB = view.findViewById(R.id.rx_ch_b);
+        rxMsgMin = view.findViewById(R.id.rx_msg_min);
 
-        // Section 4: Location & Hex
-        gpsStatusText = view.findViewById(R.id.gps_status_text);
-        gpsLastFixText = view.findViewById(R.id.gps_last_fix_text);
-        latitudeText = view.findViewById(R.id.latitude_text);
-        longitudeText = view.findViewById(R.id.longitude_text);
-        accuracyText = view.findViewById(R.id.accuracy_text);
-        hexIdText = view.findViewById(R.id.hex_id_text);
+        // Location & Hex
+        locLatLon = view.findViewById(R.id.loc_latlon);
+        locAccuracy = view.findViewById(R.id.loc_accuracy);
+        locFixTime = view.findViewById(R.id.loc_fix_time);
+        locH3Hex = view.findViewById(R.id.loc_h3_hex);
 
-        // Section 5: Hex Coverage
-        hexListText = view.findViewById(R.id.hex_list_text);
-        estimatedTmastText = view.findViewById(R.id.estimated_tmast_text);
+        // Hex Coverage
+        hexList = view.findViewById(R.id.hex_list);
+        hexTmastTotal = view.findViewById(R.id.hex_tmast_total);
 
-        // Section 6: Upload
-        messagesSentText = view.findViewById(R.id.messages_sent_text);
-        messagesFailedText = view.findViewById(R.id.messages_failed_text);
-        lastUploadText = view.findViewById(R.id.last_upload_text);
-        endpointUrlText = view.findViewById(R.id.endpoint_url_text);
+        // Upload
+        uploadSent = view.findViewById(R.id.upload_sent);
+        uploadFailed = view.findViewById(R.id.upload_failed);
+        uploadLast = view.findViewById(R.id.upload_last);
+        uploadEndpoint = view.findViewById(R.id.upload_endpoint);
 
-        // Section 7: Bond
-        bondStatusText = view.findViewById(R.id.bond_status_text);
-
-        // Toggles (from original dashboard)
+        // Toggles
         communityShareToggle = view.findViewById(R.id.community_share_toggle);
         mastchainFeedToggle = view.findViewById(R.id.mastchain_feed_toggle);
 
-        // Initialize uptime
-        sessionStartTime = System.currentTimeMillis();
-        markUptimeSlot();
-
-        // Setup status indicator shape
-        if (statusIndicator != null) {
+        // Make online dot circular
+        if (onlineDot != null) {
             GradientDrawable dot = new GradientDrawable();
             dot.setShape(GradientDrawable.OVAL);
-            dot.setColor(COLOR_RED);
-            statusIndicator.setBackground(dot);
+            dot.setColor(0xFFE5484D); // red = offline
+            onlineDot.setBackground(dot);
         }
 
-        // Setup toggles
+        // Load toggle state
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (communityShareToggle != null) {
-            communityShareToggle.setChecked(prefs.getBoolean("sSHARING", false));
-            communityShareToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.edit().putBoolean("sSHARING", isChecked).apply();
-                refreshStats();
-            });
-        }
-        if (mastchainFeedToggle != null) {
-            mastchainFeedToggle.setChecked(prefs.getBoolean("hENABLE", false));
-            mastchainFeedToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.edit().putBoolean("hENABLE", isChecked).apply();
-                if (isChecked) {
-                    HttpOutputManager.getInstance().start(requireContext());
-                } else {
-                    HttpOutputManager.getInstance().stop();
-                }
-                refreshStats();
-            });
-        }
+        communityShareToggle.setChecked(prefs.getBoolean("sSHARING", false));
+        mastchainFeedToggle.setChecked(prefs.getBoolean("hENABLE", false));
 
-        // Buttons
-        view.findViewById(R.id.open_dashboard_button).setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(STATION_DASHBOARD_URL));
-            startActivity(browserIntent);
-        });
-
-        view.findViewById(R.id.reset_stats_button).setOnClickListener(v -> {
-            HttpOutputManager.resetStats();
-            hexMap.clear();
+        // Toggle listeners
+        communityShareToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("sSHARING", isChecked).apply();
             refreshStats();
         });
 
+        mastchainFeedToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("hENABLE", isChecked).apply();
+            if (isChecked) {
+                HttpOutputManager.getInstance().start(requireContext());
+            } else {
+                HttpOutputManager.getInstance().stop();
+            }
+            refreshStats();
+        });
+
+        // Open Dashboard button
+        MaterialButton openDashboardBtn = view.findViewById(R.id.open_dashboard_button);
+        openDashboardBtn.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DASHBOARD_URL));
+            startActivity(browserIntent);
+        });
+
+        // Reset Stats button
+        MaterialButton resetStatsBtn = view.findViewById(R.id.reset_stats_button);
+        resetStatsBtn.setOnClickListener(v -> {
+            HttpOutputManager.resetStats();
+            sessionStartTime = System.currentTimeMillis();
+            onlineSlotCount = 0;
+            refreshStats();
+        });
+
+        sessionStartTime = System.currentTimeMillis();
         refreshStats();
     }
 
@@ -255,246 +225,330 @@ public class MastChainStatsFragment extends Fragment {
         refreshHandler.removeCallbacks(refreshRunnable);
     }
 
-    /* ================================================================ *
-     *  Uptime Tracking                                                  *
-     * ================================================================ */
-
-    private void markUptimeSlot() {
-        long now = System.currentTimeMillis();
-        int slotIndex = getSlotIndex(now);
-        if (slotIndex >= 0 && slotIndex < SLOTS_PER_DAY) {
-            uptimeSlots[slotIndex] = true;
-        }
-        lastUploadSlotTime = now;
-    }
-
-    private int getSlotIndex(long timeMs) {
-        // Slots from midnight local time
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        String time = sdf.format(new Date(timeMs));
-        String[] parts = time.split(":");
-        int hours = Integer.parseInt(parts[0]);
-        int minutes = Integer.parseInt(parts[1]);
-        return (hours * 60 + minutes) / 5; // 5-minute slots
-    }
-
-    private double calculateUptimePercentage() {
-        int onlineSlots = 0;
-        int totalSlotsToday = getSlotIndex(System.currentTimeMillis()) + 1;
-        if (totalSlotsToday <= 0) totalSlotsToday = 1;
-
-        for (int i = 0; i < totalSlotsToday && i < SLOTS_PER_DAY; i++) {
-            if (uptimeSlots[i]) onlineSlots++;
-        }
-        return (double) onlineSlots / totalSlotsToday * 100.0;
-    }
-
-    private void buildUptimeBar() {
-        if (uptimeBar == null) return;
-        uptimeBar.removeAllViews();
-
-        int totalSlotsToday = getSlotIndex(System.currentTimeMillis()) + 1;
-        int segmentSize = Math.max(1, totalSlotsToday / 48); // 48 segments visible
-
-        for (int i = 0; i < totalSlotsToday && i < SLOTS_PER_DAY; i += segmentSize) {
-            View segment = new View(requireContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-            params.setMargins(0, 0, 1, 0);
-            segment.setLayoutParams(params);
-
-            // Check if any slot in this segment is online
-            boolean online = false;
-            for (int j = i; j < i + segmentSize && j < SLOTS_PER_DAY; j++) {
-                if (uptimeSlots[j]) { online = true; break; }
-            }
-
-            segment.setBackgroundColor(online ? COLOR_GREEN : COLOR_RED);
-            uptimeBar.addView(segment);
-        }
-    }
-
-    /* ================================================================ *
-     *  Refresh Stats                                                    *
-     * ================================================================ */
-
     private void refreshStats() {
         if (getView() == null || !isAdded()) return;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
-        // ── Section 1: Header ─────────────────────────────────────────
+        /* ── Header ────────────────────────────────────────── */
         boolean feedEnabled = prefs.getBoolean("hENABLE", false);
         boolean serviceRunning = AisService.isRunning(requireContext());
         boolean isOnline = feedEnabled && serviceRunning;
 
-        if (statusIndicator != null) {
-            GradientDrawable dot = (GradientDrawable) statusIndicator.getBackground();
-            dot.setColor(isOnline ? COLOR_GREEN : COLOR_RED);
+        // Online dot
+        if (onlineDot != null) {
+            GradientDrawable dot = (GradientDrawable) onlineDot.getBackground();
+            dot.setColor(isOnline ? 0xFF29C46A : 0xFFE5484D); // green or red
         }
-        if (statusText != null) {
-            statusText.setText(isOnline ? "Online" : (feedEnabled ? "Standby" : "Offline"));
-            statusText.setTextColor(isOnline ? COLOR_GREEN : (feedEnabled ? COLOR_YELLOW : COLOR_RED));
-        }
+
+        // Station ID
         String stationId = prefs.getString(HttpOutputManager.PREF_STATIONID, "—");
-        if (stationIdText != null) {
-            stationIdText.setText(stationId);
+        if (headerStationId != null) {
+            headerStationId.setText("Station " + stationId);
         }
 
-        // Mark uptime if online
-        if (feedEnabled && HttpOutputManager.wasLastUploadSuccess()) {
-            markUptimeSlot();
-        }
-
-        // ── Section 2: Uptime ──────────────────────────────────────────
-        double uptimePct = calculateUptimePercentage();
-        if (uptimePercentage != null) {
-            uptimePercentage.setText(String.format(Locale.getDefault(), "%.1f%%", uptimePct));
-            uptimePercentage.setTextColor(uptimePct >= 80 ? COLOR_GREEN : COLOR_RED);
-        }
-        buildUptimeBar();
-
-        if (uptimeWarning != null) {
-            if (uptimePct < 80 && uptimePct > 0) {
-                uptimeWarning.setVisibility(View.VISIBLE);
-                uptimeWarning.setText(String.format(Locale.getDefault(),
-                        "⚠ Uptime below 80%% (%.1f%%). Push every minute to stay green.", uptimePct));
+        // Status label
+        if (headerStatusLabel != null) {
+            String statusText;
+            int statusColor;
+            if (isOnline) {
+                statusText = "ONLINE";
+                statusColor = 0xFF29C46A;
+            } else if (feedEnabled) {
+                statusText = "STANDBY";
+                statusColor = 0xFFE5B53A;
             } else {
-                uptimeWarning.setVisibility(View.GONE);
+                statusText = "OFFLINE";
+                statusColor = 0xFFE5484D;
             }
+            headerStatusLabel.setText(statusText);
+            headerStatusLabel.setTextColor(statusColor);
         }
 
-        // ── Section 3: Live Reception ──────────────────────────────────
-        int total = AisCatcherJava.Statistics.getTotal();
-        int chA = AisCatcherJava.Statistics.getChA();
-        int chB = AisCatcherJava.Statistics.getChB();
-        int msg123 = AisCatcherJava.Statistics.getMsg123();
-        int msg5 = AisCatcherJava.Statistics.getMsg5();
-        int msg1819 = AisCatcherJava.Statistics.getMsg1819();
-        int msg24 = AisCatcherJava.Statistics.getMsg24();
+        /* ── Uptime ────────────────────────────────────────── */
+        updateUptime(isOnline);
 
-        if (totalMessagesText != null) totalMessagesText.setText(String.valueOf(total));
-        if (channelABText != null) channelABText.setText(chA + " / " + chB);
+        /* ── Live Reception ────────────────────────────────── */
+        updateReception();
 
-        // Vessels seen (approximation: messages 5 + 24 + 1819 are ship-specific)
-        int vesselsEst = msg5 + msg24;
-        if (vesselsSeenText != null) vesselsSeenText.setText(String.valueOf(vesselsEst));
+        /* ── Location & Hex ────────────────────────────────── */
+        updateLocation();
 
-        // Messages per minute
-        long uptime = System.currentTimeMillis() - sessionStartTime;
-        if (uptime > 60000) {
-            double msgMin = (double) total / (uptime / 60000.0);
-            if (msgPerMinText != null) msgPerMinText.setText(String.format(Locale.getDefault(), "%.1f", msgMin));
-        } else {
-            if (msgPerMinText != null) msgPerMinText.setText("—");
+        /* ── Hex Coverage ──────────────────────────────────── */
+        updateHexCoverage();
+
+        /* ── Upload Stats ──────────────────────────────────── */
+        updateUploadStats(prefs);
+
+        /* ── Toggles (sync state) ──────────────────────────── */
+        if (communityShareToggle != null) {
+            communityShareToggle.setOnCheckedChangeListener(null);
+            communityShareToggle.setChecked(prefs.getBoolean("sSHARING", false));
+            communityShareToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.edit().putBoolean("sSHARING", isChecked).apply();
+                refreshStats();
+            });
         }
-
-        // ── Section 4: Location & Hex ────────────────────────────────
-        LocationHelper locHelper = LocationHelper.getInstance();
-        if (locHelper != null) {
-            if (gpsStatusText != null) {
-                gpsStatusText.setText(locHelper.getGpsStatus());
-                boolean hasFix = locHelper.hasFix();
-                gpsStatusText.setTextColor(hasFix ? COLOR_GREEN : COLOR_RED);
-            }
-            if (gpsLastFixText != null) gpsLastFixText.setText(locHelper.getTimeSinceFix());
-            if (latitudeText != null) latitudeText.setText(locHelper.getLatitudeString());
-            if (longitudeText != null) longitudeText.setText(locHelper.getLongitudeString());
-            if (accuracyText != null) accuracyText.setText(locHelper.getAccuracyString());
-
-            String hex = locHelper.getH3HexId();
-            if (hexIdText != null) hexIdText.setText(hex.isEmpty() ? "—" : hex);
-
-            // Track hex coverage
-            if (locHelper.hasFix() && !hex.isEmpty()) {
-                HexInfo info = hexMap.get(hex);
-                if (info == null) {
-                    info = new HexInfo();
-                    hexMap.put(hex, info);
+        if (mastchainFeedToggle != null) {
+            mastchainFeedToggle.setOnCheckedChangeListener(null);
+            mastchainFeedToggle.setChecked(prefs.getBoolean("hENABLE", false));
+            mastchainFeedToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.edit().putBoolean("hENABLE", isChecked).apply();
+                if (isChecked) {
+                    HttpOutputManager.getInstance().start(requireContext());
+                } else {
+                    HttpOutputManager.getInstance().stop();
                 }
-                info.messageCount += (total - msgCountAtLastRefresh);
-                info.lastSeen = System.currentTimeMillis();
-            }
-        } else {
-            if (gpsStatusText != null) {
-                gpsStatusText.setText("GPS unavailable");
-                gpsStatusText.setTextColor(COLOR_RED);
-            }
-        }
-        msgCountAtLastRefresh = total;
-
-        // ── Section 5: Hex Coverage ───────────────────────────────────
-        StringBuilder hexListBuilder = new StringBuilder();
-        double totalTmast = 0;
-
-        for (Map.Entry<String, HexInfo> entry : hexMap.entrySet()) {
-            String hexId = entry.getKey();
-            HexInfo info = entry.getValue();
-            int count = info.messageCount;
-            boolean eligible = count >= HEX_ELIGIBLE_THRESHOLD;
-
-            String colorEmoji;
-            double tmast;
-            if (!eligible) {
-                colorEmoji = "⬜";
-                tmast = 0;
-            } else if (info.stationCount <= 2) {
-                colorEmoji = "🟢";
-                tmast = TMAST_PER_HEX / info.stationCount;
-            } else {
-                colorEmoji = "🟡";
-                tmast = TMAST_PER_HEX / info.stationCount;
-            }
-
-            hexListBuilder.append(String.format(Locale.getDefault(),
-                    "%s %s  %d/%d  %.3f tMAST\n",
-                    colorEmoji, hexId, count, HEX_ELIGIBLE_THRESHOLD, tmast));
-            totalTmast += tmast;
-        }
-
-        if (hexListText != null) {
-            hexListText.setText(hexMap.isEmpty() ? "No hex data yet (GPS fixing…)" : hexListBuilder.toString().trim());
-        }
-        if (estimatedTmastText != null) {
-            estimatedTmastText.setText(String.format(Locale.getDefault(), "%.3f", totalTmast));
-        }
-
-        // ── Section 6: Upload ─────────────────────────────────────────
-        if (messagesSentText != null) messagesSentText.setText(String.valueOf(HttpOutputManager.getMessagesSent()));
-        if (messagesFailedText != null) messagesFailedText.setText(String.valueOf(HttpOutputManager.getMessagesFailed()));
-
-        long lastUpload = HttpOutputManager.getLastUploadTime();
-        if (lastUploadText != null) {
-            if (lastUpload == 0) {
-                lastUploadText.setText("—");
-            } else {
-                long elapsed = System.currentTimeMillis() - lastUpload;
-                if (elapsed < 60_000) lastUploadText.setText(elapsed / 1000 + "s ago");
-                else if (elapsed < 3_600_000) lastUploadText.setText(elapsed / 60_000 + "m ago");
-                else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-                    lastUploadText.setText(sdf.format(new Date(lastUpload)));
-                }
-            }
-        }
-
-        String url = prefs.getString(HttpOutputManager.PREF_URL, "https://api.mastchain.io/api/upload");
-        if (endpointUrlText != null) endpointUrlText.setText(url);
-
-        // ── Section 7: Bond ────────────────────────────────────────────
-        // tMAST estimation from hex coverage
-        if (bondStatusText != null) {
-            if (totalTmast >= 10) {
-                bondStatusText.setText(String.format(Locale.getDefault(), "✅ %.1f tMAST (bond met!)", totalTmast));
-                bondStatusText.setTextColor(COLOR_GREEN);
-            } else {
-                bondStatusText.setText(String.format(Locale.getDefault(), "%.1f / 10 tMAST needed", totalTmast));
-                bondStatusText.setTextColor(COLOR_YELLOW);
-            }
+                refreshStats();
+            });
         }
 
         // Schedule next refresh
         refreshHandler.removeCallbacks(refreshRunnable);
         refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL_MS);
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Uptime tracking                                             *
+     *  Day has 288 slots of 5 min. We estimate uptime from        *
+     *  session time and online status.                             *
+     * ════════════════════════════════════════════════════════════ */
+
+    private void updateUptime(boolean isOnline) {
+        if (uptimePercent == null) return;
+
+        long now = System.currentTimeMillis();
+        long dayStart = getDayStart(now);
+        long elapsedToday = now - dayStart;
+        long sessionElapsed = now - sessionStartTime;
+
+        // Count online slots: estimate based on current session
+        // If online now, assume continuous uptime since session start
+        int totalSlotsToday = (int) (elapsedToday / (5 * 60 * 1000));
+        int onlineSlots;
+        if (isOnline) {
+            onlineSlots = (int) Math.min(sessionElapsed / (5 * 60 * 1000), totalSlotsToday);
+            onlineSlots = Math.max(1, onlineSlots);  // At least 1 if currently online
+        } else {
+            onlineSlots = onlineSlotCount;
+        }
+
+        if (isOnline) onlineSlotCount = onlineSlots;
+
+        double uptimePct = totalSlotsToday > 0 ? (100.0 * onlineSlots / totalSlotsToday) : 0;
+        uptimePct = Math.min(100.0, uptimePct);
+
+        uptimePercent.setText(String.format(Locale.getDefault(), "%.0f", uptimePct));
+
+        // Color based on threshold
+        if (uptimePct >= UPTIME_THRESHOLD * 100) {
+            uptimePercent.setTextColor(0xFF29C46A); // green
+        } else if (uptimePct >= 50) {
+            uptimePercent.setTextColor(0xFFE5B53A); // yellow
+        } else {
+            uptimePercent.setTextColor(0xFFE5484D); // red
+        }
+
+        // Build uptime bar (288 colored blocks)
+        buildUptimeBar(onlineSlots, totalSlotsToday);
+    }
+
+    private void buildUptimeBar(int onlineSlots, int totalSlots) {
+        if (uptimeBarContainer == null) return;
+        uptimeBarContainer.removeAllViews();
+
+        int displaySlots = Math.max(1, Math.min(DAY_SLOTS, totalSlots));
+        int displayOnline = Math.min(onlineSlots, displaySlots);
+
+        // We display a simplified bar with fewer blocks for performance
+        int blockCount = 48; // 48 blocks * 6 slots each = 288
+        int slotsPerBlock = DAY_SLOTS / blockCount;
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        params.setMargins(0, 0, 1, 0);
+
+        for (int i = 0; i < blockCount; i++) {
+            TextView block = new TextView(requireContext());
+            block.setLayoutParams(params);
+            int slotStart = i * slotsPerBlock;
+            boolean isSlotOnline = slotStart < displayOnline;
+            block.setBackgroundColor(isSlotOnline ? 0xFF29C46A : 0xFFE5484D);
+            block.setText("");
+            uptimeBarContainer.addView(block);
+        }
+    }
+
+    private long getDayStart(long now) {
+        // Start of today in local timezone
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeInMillis(now);
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Live Reception (from AisCatcherJava.Statistics)             *
+     * ════════════════════════════════════════════════════════════ */
+
+    private void updateReception() {
+        try {
+            int total = AisCatcherJava.Statistics.getTotal();
+            int chA = AisCatcherJava.Statistics.getChA();
+            int chB = AisCatcherJava.Statistics.getChB();
+
+            if (rxTotal != null) rxTotal.setText(formatNumber(total));
+            if (rxChA != null) rxChA.setText(formatNumber(chA));
+            if (rxChB != null) rxChB.setText(formatNumber(chB));
+
+            // Estimate vessels from message types (rough: unique MMSIs ~ total msgs * 0.1)
+            int msg123 = AisCatcherJava.Statistics.getMsg123();
+            int vessels = Math.max(1, msg123 / 3); // rough estimate
+            if (rxVessels != null) rxVessels.setText(formatNumber(vessels));
+
+            // msgs/min: estimate from total messages and session time
+            long sessionMs = System.currentTimeMillis() - sessionStartTime;
+            int minutes = (int) Math.max(1, sessionMs / 60000);
+            int msgsPerMin = total / minutes;
+            if (rxMsgMin != null) rxMsgMin.setText(String.valueOf(msgsPerMin));
+        } catch (Exception e) {
+            // Statistics may not be available if decoder not running
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Location & H3 Hex (from LocationHelper)                     *
+     * ════════════════════════════════════════════════════════════ */
+
+    private void updateLocation() {
+        double lat = LocationHelper.getLatitude();
+        double lon = LocationHelper.getLongitude();
+        float acc = LocationHelper.getAccuracy();
+        long fixTime = LocationHelper.getLastFixTime();
+        String h3 = LocationHelper.getH3Hex();
+
+        if (locLatLon != null) {
+            if (Double.isNaN(lat) || Double.isNaN(lon)) {
+                locLatLon.setText("Waiting for GPS…");
+                locLatLon.setTextColor(0xFF8A94A6);
+            } else {
+                locLatLon.setText(String.format(Locale.getDefault(), "%.5f°, %.5f°", lat, lon));
+                locLatLon.setTextColor(0xFFE6EAF0);
+            }
+        }
+
+        if (locAccuracy != null) {
+            if (Float.isNaN(acc)) {
+                locAccuracy.setText("");
+            } else {
+                locAccuracy.setText(String.format(Locale.getDefault(), "±%.0f m accuracy", acc));
+            }
+        }
+
+        if (locFixTime != null) {
+            if (fixTime == 0) {
+                locFixTime.setText("No fix yet");
+            } else {
+                long elapsed = System.currentTimeMillis() - fixTime;
+                if (elapsed < 60_000) {
+                    locFixTime.setText(String.format(Locale.getDefault(), "Fix %ds ago", elapsed / 1000));
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                    locFixTime.setText("Fix at " + sdf.format(new Date(fixTime)));
+                }
+            }
+        }
+
+        if (locH3Hex != null) {
+            if (h3 == null || h3.isEmpty()) {
+                locH3Hex.setText("—");
+            } else {
+                // Display shorter hex for readability (last 12 chars)
+                locH3Hex.setText(h3.length() > 12 ? "…" + h3.substring(h3.length() - 12) : h3);
+            }
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Hex Coverage                                                *
+     *  Shows current hex with local tracking. Real balance is      *
+     *  on the server dashboard.                                    *
+     * ════════════════════════════════════════════════════════════ */
+
+    private void updateHexCoverage() {
+        String h3 = LocationHelper.getH3Hex();
+
+        if (hexList != null) {
+            if (h3 == null || h3.isEmpty()) {
+                hexList.setText("No GPS fix — hex coverage requires location");
+                hexList.setTextColor(0xFF8A94A6);
+            } else {
+                // Display the current hex with local status
+                // We can't know server-side station count, so show what we know
+                String hexDisplay = h3.length() > 15 ? h3.substring(0, 15) + "…" : h3;
+                hexList.setText("▸ " + hexDisplay + "\n  Local position hex (res-5)\n\n  Visit dashboard for full coverage data\n  and station overlap details.");
+                hexList.setTextColor(0xFFE6EAF0);
+            }
+        }
+
+        // tMAST estimate: just show placeholder since we can't know station overlap
+        if (hexTmastTotal != null) {
+            boolean hasFix = LocationHelper.hasFix();
+            hexTmastTotal.setText(hasFix ? "see dashboard" : "0.000");
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Upload Stats (from HttpOutputManager)                      *
+     * ════════════════════════════════════════════════════════════ */
+
+    private void updateUploadStats(SharedPreferences prefs) {
+        if (uploadSent != null) {
+            uploadSent.setText(formatNumber(HttpOutputManager.getMessagesSent()));
+        }
+        if (uploadFailed != null) {
+            uploadFailed.setText(formatNumber(HttpOutputManager.getMessagesFailed()));
+        }
+
+        long lastUpload = HttpOutputManager.getLastUploadTime();
+        if (uploadLast != null) {
+            if (lastUpload == 0) {
+                uploadLast.setText("—");
+            } else {
+                long elapsed = System.currentTimeMillis() - lastUpload;
+                if (elapsed < 60_000) {
+                    uploadLast.setText(elapsed / 1000 + "s ago");
+                } else if (elapsed < 3600_000) {
+                    uploadLast.setText(elapsed / 60_000 + "m ago");
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                    uploadLast.setText(sdf.format(new Date(lastUpload)));
+                }
+            }
+        }
+
+        String url = prefs.getString(HttpOutputManager.PREF_URL, "https://api.mastchain.io/api/upload");
+        if (uploadEndpoint != null) {
+            // Show just the host for brevity
+            try {
+                java.net.URI uri = new java.net.URI(url);
+                uploadEndpoint.setText(uri.getHost());
+            } catch (Exception e) {
+                uploadEndpoint.setText(url);
+            }
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════════ *
+     *  Utility                                                     *
+     * ════════════════════════════════════════════════════════════ */
+
+    private String formatNumber(int n) {
+        if (n >= 1_000_000) return String.format(Locale.getDefault(), "%.1fM", n / 1_000_000.0);
+        if (n >= 1_000) return String.format(Locale.getDefault(), "%.1fK", n / 1_000.0);
+        return String.valueOf(n);
     }
 }
