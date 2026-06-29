@@ -93,7 +93,7 @@ public class LocationHelper {
         @Override public void onLocationChanged(@NonNull Location location) { onNewLocation(location); }
         @Override public void onStatusChanged(String provider, int status, Bundle extras) {}
         @Override public void onProviderEnabled(@NonNull String provider) {}
-        @Override public void onProviderDisabled(@NonNull String provider) { checkLocationSettings(); }
+        @Override public void onProviderDisabled(@NonNull String provider) { promptEnableLocation(); }
     };
 
     /* ── Current location state ────────────────────────────────────── */
