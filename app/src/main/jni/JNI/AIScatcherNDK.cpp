@@ -43,11 +43,7 @@ bool communityFeed = false;
 #include "Logger.h"
 
 #include "RTLSDR.h"
-#include "AIRSPYHF.h"
-#include "HACKRF.h"
 #include "RTLTCP.h"
-#include "SpyServer.h"
-#include "AIRSPY.h"
 
 static int javaVersion;
 
@@ -240,9 +236,6 @@ public:
 struct Drivers {
     Device::RTLSDR RTLSDR;
     Device::RTLTCP RTLTCP;
-    Device::SpyServer SPYSERVER;
-    Device::AIRSPY AIRSPY;
-    Device::AIRSPYHF AIRSPYHF;
 } drivers;
 
 std::vector<IO::UDPStreamer > UDP_connections;
@@ -318,19 +311,6 @@ Java_com_jvdegithub_aiscatcher_AisCatcherJava_applySetting(JNIEnv *env, jclass, 
                 Info() << "RTLSDR: " << s << " = " << p;
                 drivers.RTLSDR.Set(s, p);
                 break;
-            case 'm':
-                Info() << "AIRSPY: " << s << " = " << p;
-                drivers.AIRSPY.Set(s, p);
-                break;
-            case 'h':
-                Info() << "AIRSPYHF: " << s << " = " << p;
-                drivers.AIRSPYHF.Set(s, p);
-                break;
-            case 's':
-                Info() << "SPYSERVER: " << s << " = " << p;
-                drivers.SPYSERVER.Set(s, p);
-                break;
-
         }
 
     } catch (std::exception& e) {
@@ -500,15 +480,6 @@ Java_com_jvdegithub_aiscatcher_AisCatcherJava_createReceiver(JNIEnv *env, jclass
     } else if (source == 1) {
         Info() << "Device: RTLSDR";
         device = &drivers.RTLSDR;
-    } else if (source == 2) {
-        Info() << "Device: AIRSPY";
-        device = &drivers.AIRSPY;
-    } else if (source == 3) {
-        Info() << "Device: AIRSPYHF";
-        device = &drivers.AIRSPYHF;
-    } else if (source == 4) {
-        Info() << "Device: SPYSERVER";
-        device = &drivers.SPYSERVER;
     } else {
         Info() << "Support for this device not included.";
         return -1;
