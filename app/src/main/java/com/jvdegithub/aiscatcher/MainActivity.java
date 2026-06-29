@@ -198,17 +198,12 @@ public class MainActivity<binding> extends AppCompatActivity implements AisCatch
             sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         }
 
-        // ugly to have the callback in mainactivity, to be cleaned up
+        // Route permission results through LocationHelper for "denied forever" handling
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (requestCode == locationHelper.PERMISSION_REQUEST_CODE) {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
-                    locationHelper.requestLocationUpdates();
-                }
+            if (requestCode == LocationHelper.PERMISSION_REQUEST_CODE) {
+                locationHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
 
