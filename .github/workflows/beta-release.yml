@@ -36,21 +36,28 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
 
-    - name: Show build result
+    - name: Debug - Find APK
       if: always()
       run: |
-        echo "=== Build log tail ==="
-        tail -100 build.log || true
-        echo "=== Searching for APK ==="
-        find app/build/outputs -name '*.apk' -type f 2>/dev/null || true
-        echo "=== Done ==="
+        echo "=== PWD ==="
+        pwd
+        echo "=== Find APK in entire workspace ==="
+        find $GITHUB_WORKSPACE -name '*.apk' -type f 2>/dev/null || echo "No APKs found in workspace"
+        echo "=== Find APK in home ==="
+        find ~ -name '*.apk' -type f 2>/dev/null | head -20 || echo "No APKs in home"
+        echo "=== List app/build/outputs ==="
+        ls -laR app/build/outputs/ 2>/dev/null || echo "No outputs dir"
+        echo "=== Gradle build dir ==="
+        ls -la app/build/ 2>/dev/null || echo "No app/build dir"
+        echo "=== Find any .apk on system (limited) ==="
+        find / -maxdepth 6 -name '*.apk' -type f 2>/dev/null | head -20 || echo "No APKs found"
 
     - name: Find APK
       id: apk
       run: |
-        APK=$(find app/build/outputs -name '*.apk' -type f | head -1)
+        APK=$(find $GITHUB_WORKSPACE -name '*.apk' -type f | head -1)
         if [ -z "$APK" ]; then
-          echo "ERROR: No APK found!"
+          echo "ERROR: No APK found anywhere!"
           exit 1
         fi
         echo "Found: $APK"
