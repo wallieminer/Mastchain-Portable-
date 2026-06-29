@@ -70,6 +70,7 @@ add_library( # Sets the name of the library.
         ./AIS-catcher/Source/Utilities/Convert.cpp ./AIS-catcher/Source/Utilities/Serialize.cpp ./AIS-catcher/Source/Utilities/Parse.cpp ./AIS-catcher/Source/Utilities/Helper.cpp ./AIS-catcher/Source/Utilities/StreamHelpers.cpp ./AIS-catcher/Source/Utilities/TemplateString.cpp
         ./AIS-catcher/Source/Application/DeviceManager.cpp ./AIS-catcher/Source/Application/WebViewer.cpp ./AIS-catcher/Source/Application/Prometheus.cpp ./AIS-catcher/Source/Application/MapTiles.cpp
         ./AIS-catcher/Source/Device/Serial.cpp
+        ./AIS-catcher/Source/Aviation/ADSB.cpp ./AIS-catcher/Source/Aviation/Basestation.cpp ./AIS-catcher/Source/Aviation/Beast.cpp
 
         JNI/AIScatcherNDK.cpp)
 
@@ -77,7 +78,7 @@ include_directories(
         ./libusb/android ./libusb/libusb ./libusb/libusb/os
         ./rtl-sdr/include
         ./AIS-catcher/Source ./AIS-catcher/Source/Application ./AIS-catcher/Source/IO ./AIS-catcher/Source/Library ./AIS-catcher/Source/Tracking ./AIS-catcher/Source/JSON
-        ./AIS-catcher/Source/DSP ./AIS-catcher/Source/Device ./AIS-catcher/Source/Utilities ./AIS-catcher/Source/Marine)
+        ./AIS-catcher/Source/DSP ./AIS-catcher/Source/Device ./AIS-catcher/Source/Utilities ./AIS-catcher/Source/Marine ./AIS-catcher/Source/Aviation)
 
 add_definitions(-DHASRTLSDR -DHASRTLSDR_BIASTEE -DHASRTL_ANDROID -DHASRTLSDR_TUNERBW)
 
