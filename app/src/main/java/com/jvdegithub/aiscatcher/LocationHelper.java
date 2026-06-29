@@ -43,7 +43,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
-import java.lang.reflect.Method;
+import com.uber.h3core.H3Core;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -102,6 +102,7 @@ public class LocationHelper {
     private volatile float accuracy = Float.NaN;
     private volatile long lastFixTime = 0;
     private volatile String h3HexId = "";
+    private static volatile boolean h3Available = true;  // assume available until proven otherwise
     private volatile boolean hasFix = false;
     private volatile String gpsStatus = "GPS off";
 
@@ -504,39 +505,31 @@ public class LocationHelper {
      * to a simple geohash-based cell identifier.
      */
     private String calculateH3Hex(double lat, double lon) {
+        if (!h3Available) {
+            return calculateSimpleHexId(lat, lon);
+        }
         try {
-            // Try Uber H3 Java library
-            Class<?> h3Clazz = Class.forName("com.uber.h3core.H3Core");
-            Method newInstance = h3Clazz.getMethod("newInstance");
-            Object h3 = newInstance.invoke(null);
-            Method latLonToCell = h3Clazz.getMethod("latLngToCell", double.class, double.class, int.class);
-            long cellAddr = (long) latLonToCell.invoke(h3, lat, lon, H3_RESOLUTION);
-            Method formatCell = h3Clazz.getMethod("h3ToString", long.class);
-            return (String) formatCell.invoke(h3, cellAddr);
-        } catch (Exception e) {
-            // Fallback: simple cell-based hex ID
+            H3Core h3 = H3Core.newInstance();
+            long cellAddr = h3.latLngToCell(lat, lon, H3_RESOLUTION);
+            return h3.h3ToString(cellAddr);
+        } catch (Throwable e) {
+            Log.w(TAG, "H3 not available, using fallback: " + e.getMessage());
+            h3Available = false;
             return calculateSimpleHexId(lat, lon);
         }
     }
 
-    /**
-     * Simple fallback hex ID when H3 library is not available.
-     * Creates a grid cell identifier at ~resolution 5 accuracy (~4.5 km edge length).
-     */
     private String calculateSimpleHexId(double lat, double lon) {
-        // Resolution 5 ≈ 4.5 km edge length
-        // Grid cell size: ~0.04 degrees latitude, ~0.04/0.8 = 0.05 degrees longitude
-        // (accounting for cosine of latitude)
-        double cosLat = Math.cos(Math.toRadians(lat));
+        // Simple grid-based fallback when H3 is unavailable
         double latStep = 0.04;
-        double lonStep = cosLat > 0.1 ? latStep / cosLat : 0.4;
+        double cosLat = Math.cos(Math.toRadians(lat));
+        double lonStep = Math.max(0.04, latStep / Math.max(cosLat, 0.01));
 
         int latIdx = (int) Math.floor(lat / latStep);
         int lonIdx = (int) Math.floor(lon / lonStep);
 
-        // Offset to make indices positive
-        int latOffset = latIdx + 90 / (int) latStep; // roughly center at equator
-        int lonOffset = lonIdx + 180 / (int) lonStep;
+        int latOffset = latIdx + 2250; // 90/0.04
+        int lonOffset = lonIdx + 4500;  // 180/0.04
 
         return String.format("%d-%d", latOffset, lonOffset);
     }

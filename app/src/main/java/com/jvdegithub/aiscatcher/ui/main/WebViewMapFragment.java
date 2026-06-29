@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
@@ -38,6 +40,10 @@ public class WebViewMapFragment extends Fragment {
     private LogBook logbook;
     private SharedPreferences sharedPreferences;
     private Context context;
+    private Handler retryHandler = new Handler(Looper.getMainLooper());
+    private int retryCount = 0;
+    private static final int MAX_RETRIES = 5;
+    private static final long RETRY_DELAY_MS = 2000;
 
     public static WebViewMapFragment newInstance() {
         return new WebViewMapFragment();
@@ -68,6 +74,23 @@ public class WebViewMapFragment extends Fragment {
         context = null;
     }
 
+    private String getMapHtml() {
+        boolean isDark = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        String bgColor = isDark ? "#0a0e14" : "#ffffff";
+
+        return "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+            "<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" />" +
+            "<script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>" +
+            "<style>body{margin:0;padding:0;background:" + bgColor + ";} #map{width:100vw;height:100vh;}</style></head>" +
+            "<body><div id=\"map\"></div>" +
+            "<script>" +
+            "var map = L.map('map').setView([52.4, 5.3], 10);" +
+            "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {" +
+            "attribution: '&copy; OpenStreetMap contributors', maxZoom: 19}).addTo(map);" +
+            "L.marker([52.4, 5.3]).addTo(map).bindPopup('MastChain Station').openPopup();" +
+            "</script></body></html>";
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         logbook = LogBook.getInstance();
@@ -91,44 +114,29 @@ public class WebViewMapFragment extends Fragment {
 
                 if (url.startsWith("https://cdn.jsdelivr.net/") || url.startsWith("https://unpkg.com/")) {
                     String prefix = url.startsWith("https://cdn.jsdelivr.net/") ? "https://cdn.jsdelivr.net/" : "https://unpkg.com/";
-
                     String remainingPath = "webassets/cdn/" + url.substring(prefix.length());
 
                     try {
-                        if (context == null) {
-                            return null;
-                        }
-
+                        if (context == null) return null;
                         InputStream inputStream = context.getAssets().open(remainingPath);
-
                         String contentType;
-                        if (remainingPath.endsWith(".css")) {
-                            contentType = "text/css";
-                        } else if (remainingPath.endsWith(".svg")) {
-                            contentType = "image/svg+xml";
-                        } else if (remainingPath.endsWith(".png")) {
-                            contentType = "image/png";
-                        } else if (remainingPath.endsWith(".js")) {
-                            contentType = "text/plain";
-                        } else return null;
-
-                        WebResourceResponse response = new WebResourceResponse(contentType, "UTF-8", inputStream);
-
-                        return response;
+                        if (remainingPath.endsWith(".css")) contentType = "text/css";
+                        else if (remainingPath.endsWith(".svg")) contentType = "image/svg+xml";
+                        else if (remainingPath.endsWith(".png")) contentType = "image/png";
+                        else if (remainingPath.endsWith(".js")) contentType = "text/plain";
+                        else return null;
+                        return new WebResourceResponse(contentType, "UTF-8", inputStream);
                     } catch (IOException e) {
                         logbook.addLog("Cannot load " + remainingPath);
                     }
                 }
-
                 return null;
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 webView.setVisibility(View.INVISIBLE);
-
-                // Restore localStorage content as early as possible
-                if(getSharedPreferences()!= null) {
+                if (getSharedPreferences() != null) {
                     String localStorageContent = getSharedPreferences().getString("localStorageContent", null);
                     if (localStorageContent != null) {
                         webView.evaluateJavascript("localStorage.setItem('settings', " + localStorageContent + ");", null);
@@ -145,40 +153,65 @@ public class WebViewMapFragment extends Fragment {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                logbook.addLog(String.format("W(%d): %s",
-                        consoleMessage.lineNumber(), consoleMessage.message()));
-
+                logbook.addLog(String.format("W(%d): %s", consoleMessage.lineNumber(), consoleMessage.message()));
                 return true;
             }
         });
 
-        String url = "http://localhost:" + MainActivity.port + "?welcome=false&android=true";
+        // Try local AIS-catcher server first, fallback to online map
+        if (MainActivity.port > 0) {
+            String url = "http://localhost:" + MainActivity.port + "?welcome=false&android=true";
+            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
+                url += "&dark_mode=true";
+            else
+                url += "&dark_mode=false";
+            webView.loadUrl(url);
+            logbook.addLog("Opening: " + url);
 
-        int currentNightMode = AppCompatDelegate.getDefaultNightMode();
-        if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)
-            url += "&dark_mode=true";
-        else
-            url += "&dark_mode=false";
-        webView.loadUrl(url);
-        logbook.addLog("Opening: " + url);
+            // Fallback to online map if local server doesn't respond
+            retryHandler.postDelayed(() -> {
+                if (webView.getProgress() < 100 && retryCount < MAX_RETRIES) {
+                    retryCount++;
+                    logbook.addLog("Local server not responding, trying online map...");
+                    loadOnlineMap();
+                }
+            }, 5000);
+        } else {
+            loadOnlineMap();
+        }
 
         return rootView;
+    }
+
+    private void loadOnlineMap() {
+        if (webView != null && context != null) {
+            webView.loadDataWithBaseURL("https://openstreetmap.org", getMapHtml(), "text/html", "UTF-8", null);
+            logbook.addLog("Loading online map (no local server)");
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        webView.evaluateJavascript("localStorage.getItem('settings');", value -> {
-            if (value != null && !value.equals("null")) {
-                getSharedPreferences().edit().putString("localStorageContent", value).apply();
-            }
-        });
+        retryHandler.removeCallbacksAndMessages(null);
+        if (webView != null) {
+            webView.evaluateJavascript("localStorage.getItem('settings');", value -> {
+                if (value != null && !value.equals("null")) {
+                    getSharedPreferences().edit().putString("localStorageContent", value).apply();
+                }
+            });
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        webView.stopLoading();
+        retryHandler.removeCallbacksAndMessages(null);
+        if (webView != null) {
+            webView.stopLoading();
+            webView.destroy();
+            webView = null;
+        }
         logbook.addLog("View is destroyed.");
     }
 }
