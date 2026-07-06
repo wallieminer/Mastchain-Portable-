@@ -4,13 +4,13 @@ Community-optimized builds of the MastChain AIS Catcher app for Android.
 
 ## ⚠️ Privacy Fix
 
-The original builds contained **hardcoded personal credentials** as default values in the MastChain Feed settings. These have been replaced with neutral placeholders:
+The original builds contained **hardcoded personal credentials** as default values in the MastChain Feed settings. These have been **removed** — all credential fields are now blank:
 
 | Setting | Before (⚠️ LEAK) | After (✅ Safe) |
 |---------|-------------------|-----------------|
-| Username | `wallieminer@protonmail.com` | `user@example.com` |
-| Password | *(base64 encoded token)* | `your_api_key_here` |
-| Station ID | `WallieM3` | `AIS-Station-01` |
+| Username | `wallieminer@protonmail.com` | *(blank — enter your own)* |
+| Password | `6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=` | *(blank — enter your own)* |
+| Station ID | `WallieM3` | *(blank — enter your own)* |
 | URL | `https://api.mastchain.io/api/upload` | `https://api.mastchain.io/api/upload` *(unchanged)* |
 
 > **You must enter your own MastChain credentials on first launch.**
@@ -21,8 +21,8 @@ The original builds contained **hardcoded personal credentials** as default valu
 
 | Build | File | Size | Description |
 |-------|------|------|-------------|
-| **v3.0 Community** | `builds/mastchain-v3.0-community.apk` | 9.5 MB | Original v3.0 base, credentials sanitized |
-| **Nav Finish Community** | `builds/mastchain-nav-finish-community.apk` | 9.5 MB | Nav-finish build with UI improvements, credentials sanitized |
+| **v3.0 Community** | `builds/mastchain-v3.0-community.apk` | 9.5 MB | Original v3.0 base, credentials removed |
+| **Nav Finish Community** | `builds/mastchain-nav-finish-community.apk` | 9.5 MB | Nav-finish build with UI improvements, credentials removed |
 
 ---
 
@@ -35,15 +35,15 @@ The nav-finish build was created with **Claude Code** and includes:
 - ✅ Better station dashboard integration
 - ✅ UI refinements for mobile screens
 - ✅ Updated MastChain stats fragment layout
-- ⚠️ Original personal credentials were hardcoded → **now fixed**
+- ⚠️ Original personal credentials were hardcoded → **now removed**
 
 ### 🎮 SwitchBot/OpenClaw Changes (Both Builds)
 Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchClaw device:
 
-- ❌ **Removed** hardcoded email (`wallieminer@protonmail.com`)
-- ❌ **Removed** hardcoded password/token (base64 encoded)
-- ❌ **Removed** hardcoded station ID (`WallieM3`)
-- ✅ **Replaced with** neutral placeholders: `user@example.com`, `your_api_key_here`, `AIS-Station-01`
+- ❌ **Removed** hardcoded email (`wallieminer@protonmail.com`) → **blank**
+- ❌ **Removed** hardcoded password/token (base64 encoded) → **blank**
+- ❌ **Removed** hardcoded station ID (`WallieM3`) → **blank**
+- ✅ All three fields now default to **empty** — users must enter their own credentials
 - ✅ MastChain API URL unchanged (required for functionality)
 
 ### 📋 Quick Diff (SharedPreferences defaults)
@@ -54,10 +54,10 @@ Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchCl
 <EditTextPreference android:key="hPASSWORD" android:defaultValue="6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=" />
 <EditTextPreference android:key="hSTATIONID" android:defaultValue="WallieM3" />
 
-<!-- AFTER (safe - neutral placeholders) -->
-<EditTextPreference android:key="hUSERNAME" android:defaultValue="user@example.com" />
-<EditTextPreference android:key="hPASSWORD" android:defaultValue="your_api_key_here" />
-<EditTextPreference android:key="hSTATIONID" android:defaultValue="AIS-Station-01" />
+<!-- AFTER (safe - blank defaults, user enters own credentials) -->
+<EditTextPreference android:key="hUSERNAME" android:defaultValue="" />
+<EditTextPreference android:key="hPASSWORD" android:defaultValue="" />
+<EditTextPreference android:key="hSTATIONID" android:defaultValue="" />
 ```
 
 ---
@@ -76,7 +76,7 @@ Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchCl
 
 - ✅ No personal data included in any build
 - ✅ No API keys, tokens, or real credentials hardcoded
-- ✅ Default values are neutral placeholders only
+- ✅ All credential fields are **blank** — users must enter their own
 - ✅ MastChain API URL points to the official endpoint
 
 ---
@@ -89,14 +89,12 @@ If you want to rebuild from the decompiled source:
 # Decompile
 apktool d mastchain-v3.0.apk -o mastchain-decompiled
 
-# Edit res/xml/preferences.xml - change defaults
+# Edit res/xml/preferences.xml - change defaults to blank
 # Rebuild
 apktool b mastchain-decompiled -o mastchain-community.apk
 ```
 
 ---
-
-Built by the community, for the community 🤝
 
 ## 📸 Screenshots
 
@@ -112,3 +110,7 @@ Built by the community, for the community 🤝
 | 8 | `screenshots/screenshot-08.jpg` | App view |
 | 9 | `screenshots/screenshot-09.jpg` | App view |
 | 10 | `screenshots/screenshot-10.jpg` | App view |
+
+---
+
+Built by the community, for the community 🤝
