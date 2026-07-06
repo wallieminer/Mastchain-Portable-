@@ -98,18 +98,37 @@ apktool b mastchain-decompiled -o mastchain-community.apk
 
 ## 📸 Screenshots
 
-| # | Screenshot | Description |
-|---|-----------|-------------|
-| 1 | `screenshots/screenshot-01-main.jpg` | Main screen |
-| 2 | `screenshots/screenshot-02.jpg` | App view |
-| 3 | `screenshots/screenshot-03.jpg` | Settings |
-| 4 | `screenshots/screenshot-04.jpg` | App view |
-| 5 | `screenshots/screenshot-05.jpg` | App view |
-| 6 | `screenshots/screenshot-06.jpg` | App view |
-| 7 | `screenshots/screenshot-07.jpg` | App view |
-| 8 | `screenshots/screenshot-08.jpg` | App view |
-| 9 | `screenshots/screenshot-09.jpg` | App view |
-| 10 | `screenshots/screenshot-10.jpg` | App view |
+<p align="center">
+  <img src="screenshots/01-main-map.jpg" width="200" alt="Main map view" />
+  <img src="screenshots/02-map-zoomed.jpg" width="200" alt="Map zoomed in" />
+  <img src="screenshots/03-vessel-list.jpg" width="200" alt="Vessel list" />
+  <img src="screenshots/04-vessel-detail.jpg" width="200" alt="Vessel detail" />
+</p>
+
+<p align="center">
+  <img src="screenshots/05-mastchain-dashboard.jpg" width="200" alt="MastChain dashboard" />
+  <img src="screenshots/06-mastchain-feed-settings.jpg" width="200" alt="MastChain feed settings" />
+  <img src="screenshots/07-settings-main.jpg" width="200" alt="Settings" />
+  <img src="screenshots/08-settings-rtl-sdr.jpg" width="200" alt="RTL-SDR settings" />
+</p>
+
+<p align="center">
+  <img src="screenshots/09-mastchain-stats.jpg" width="200" alt="MastChain stats" />
+  <img src="screenshots/10-app-about.jpg" width="200" alt="App about" />
+</p>
+
+| # | File | Description |
+|---|------|-------------|
+| 1 | `screenshots/01-main-map.jpg` | Main map with ship positions |
+| 2 | `screenshots/02-map-zoomed.jpg` | Map zoomed in on vessels |
+| 3 | `screenshots/03-vessel-list.jpg` | Vessel list view |
+| 4 | `screenshots/04-vessel-detail.jpg` | Vessel detail info |
+| 5 | `screenshots/05-mastchain-dashboard.jpg` | MastChain dashboard tab |
+| 6 | `screenshots/06-mastchain-feed-settings.jpg` | MastChain feed settings |
+| 7 | `screenshots/07-settings-main.jpg` | Main settings screen |
+| 8 | `screenshots/08-settings-rtl-sdr.jpg` | RTL-SDR settings |
+| 9 | `screenshots/09-mastchain-stats.jpg` | MastChain statistics |
+| 10 | `screenshots/10-app-about.jpg` | App info screen |
 
 ---
 
