@@ -97,3 +97,18 @@ apktool b mastchain-decompiled -o mastchain-community.apk
 ---
 
 Built by the community, for the community 🤝
+
+## 📸 Screenshots
+
+| # | Screenshot | Description |
+|---|-----------|-------------|
+| 1 | `screenshots/screenshot-01-main.jpg` | Main screen |
+| 2 | `screenshots/screenshot-02.jpg` | App view |
+| 3 | `screenshots/screenshot-03.jpg` | Settings |
+| 4 | `screenshots/screenshot-04.jpg` | App view |
+| 5 | `screenshots/screenshot-05.jpg` | App view |
+| 6 | `screenshots/screenshot-06.jpg` | App view |
+| 7 | `screenshots/screenshot-07.jpg` | App view |
+| 8 | `screenshots/screenshot-08.jpg` | App view |
+| 9 | `screenshots/screenshot-09.jpg` | App view |
+| 10 | `screenshots/screenshot-10.jpg` | App view |
