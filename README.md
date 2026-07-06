@@ -6,12 +6,12 @@ Community-optimized builds of the MastChain AIS Catcher app for Android.
 
 The original builds contained **hardcoded personal credentials** as default values in the MastChain Feed settings. These have been **removed** — all credential fields are now blank:
 
-| Setting | Before (⚠️ LEAK) | After (✅ Safe) |
-|---------|-------------------|-----------------|
-| Username | `wallieminer@protonmail.com` | *(blank — enter your own)* |
-| Password | `6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=` | *(blank — enter your own)* |
-| Station ID | `WallieM3` | *(blank — enter your own)* |
-| URL | `https://api.mastchain.io/api/upload` | `https://api.mastchain.io/api/upload` *(unchanged)* |
+| Setting | After (✅ Safe) |
+|---------|-----------------|
+| Username | *(blank — enter your own)* |
+| Password | *(blank — enter your own)* |
+| Station ID | *(blank — enter your own)* |
+| URL | `https://api.mastchain.io/api/upload` *(unchanged)* |
 
 > **You must enter your own MastChain credentials on first launch.**
 
@@ -40,9 +40,9 @@ The nav-finish build was created with **Claude Code** and includes:
 ### 🎮 SwitchBot/OpenClaw Changes (Both Builds)
 Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchClaw device:
 
-- ❌ **Removed** hardcoded email (`wallieminer@protonmail.com`) → **blank**
-- ❌ **Removed** hardcoded password/token (base64 encoded) → **blank**
-- ❌ **Removed** hardcoded station ID (`WallieM3`) → **blank**
+- ❌ **Removed** hardcoded email → **blank**
+- ❌ **Removed** hardcoded password/token → **blank**
+- ❌ **Removed** hardcoded station ID → **blank**
 - ✅ All three fields now default to **empty** — users must enter their own credentials
 - ✅ MastChain API URL unchanged (required for functionality)
 
@@ -50,9 +50,9 @@ Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchCl
 
 ```xml
 <!-- BEFORE (dangerous - personal data in APK) -->
-<EditTextPreference android:key="hUSERNAME" android:defaultValue="wallieminer@protonmail.com" />
-<EditTextPreference android:key="hPASSWORD" android:defaultValue="6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=" />
-<EditTextPreference android:key="hSTATIONID" android:defaultValue="WallieM3" />
+<EditTextPreference android:key="hUSERNAME" android:defaultValue="user@example.com" />
+<EditTextPreference android:key="hPASSWORD" android:defaultValue="your_password_here" />
+<EditTextPreference android:key="hSTATIONID" android:defaultValue="Station-01" />
 
 <!-- AFTER (safe - blank defaults, user enters own credentials) -->
 <EditTextPreference android:key="hUSERNAME" android:defaultValue="" />
