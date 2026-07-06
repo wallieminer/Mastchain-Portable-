@@ -1,3 +1,4 @@
+# Build artifacts
 .gradle/
 build/
 app/build/
@@ -7,3 +8,25 @@ local.properties
 .idea/
 *.iml
 .gradle/
+
+# No credentials or personal data
+*.env
+*.key
+*.keystore
+*.jks
+
+# Decompiled sources (too large, not needed in repo)
+*-decompiled/
+
+# Original APKs with credentials (DANGER - do not upload)
+mastchain-v3.0.apk
+mastchain-v3.0-signed.apk
+mastchain-v3.0-aligned.apk
+mastchain-v3.0-fixed.apk
+mastchain-nav-finish.apk
+mastchain-claude-*.apk
+mastchain-portable*.apk
+mastchain-portable*.zip
+mastchain-v2*.apk
+mastchain-v3.1.apk
+mastchain-v3.2.apk

@@ -20,25 +20,32 @@ MastChain Portable is a modified version of the AIS-catcher Android app that **u
 | **SSL Certificate Fix** | ❌ Crashes on GrapheneOS | ✅ `onReceivedSslError` bypass |
 | **Mixed Content** | ❌ Blocks HTTP+HTTPS | ✅ `MIXED_CONTENT_ALWAYS_ALLOW` |
 | **Network Security** | ❌ Blocks MastChain API | ✅ `api.mastchain.io` trusted |
-| **Station Support** | ❌ No station ID | ✅ Station ID (WallieM3) |
+| **Station Support** | ❌ No station ID | ✅ Station ID (configurable) |
 | **Community Share Toggle** | ❌ Settings only | ✅ Dashboard toggle |
+| **Privacy** | ⚠️ Hardcoded credentials | ✅ **Blank defaults — enter your own** |
 
-### 🛠️ Technical Details
+### 🔒 Privacy Fix (v3.0-community & nav-finish-community)
 
-We built **10 versions** to fix the black map on GrapheneOS/Vanadium:
+The original builds contained **hardcoded personal credentials** as default values. The community builds have all credential fields set to **blank**:
 
-1. **V1**: Original + MastChain HTTP upload → ✅ Upload works, map black
-2. **V2**: + `network_security_config` → map black
-3. **V3**: + `onReceivedSslError` + mixed content → ✅ **MAP WORKS!** 🎉
-4. **V4**: + global SSL bypass in MainActivity → map black
-5. **V5**: + HTTPS tile proxy → map black (Chromium internal SSL)
-6. **V6**: + proxy ALL HTTPS → map black
-7. **V7**: + buffered proxy → build error
-8. **V8**: + JavaScript HTTPS→HTTP injection → map black
-9. **V9**: original WebView without fixes → map black
-10. **V3-fix**: original WebView + `onReceivedSslError` + mixed content → ✅ **FINAL VERSION** 🏆
+| Setting | Before (⚠️ LEAK) | After (✅ Safe) |
+|---------|-------------------|-----------------|
+| Username | `wallieminer@protonmail.com` | *(blank — enter your own)* |
+| Password | *(base64 encoded token)* | *(blank — enter your own)* |
+| Station ID | `WallieM3` | *(blank — enter your own)* |
+| URL | `https://api.mastchain.io/api/upload` | `https://api.mastchain.io/api/upload` *(unchanged)* |
 
-**The fix**: Simply `handler.proceed()` in `onReceivedSslError()` + `setMixedContentMode(MIXED_CONTENT_ALWAYS_ALLOW)`. That's it. 10 versions for 2 lines of code. 😂
+```xml
+<!-- BEFORE (dangerous - personal data in APK) -->
+<EditTextPreference android:key="hUSERNAME" android:defaultValue="wallieminer@protonmail.com" />
+<EditTextPreference android:key="hPASSWORD" android:defaultValue="6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk=" />
+<EditTextPreference android:key="hSTATIONID" android:defaultValue="WallieM3" />
+
+<!-- AFTER (safe - blank defaults, user enters own credentials) -->
+<EditTextPreference android:key="hUSERNAME" android:defaultValue="" />
+<EditTextPreference android:key="hPASSWORD" android:defaultValue="" />
+<EditTextPreference android:key="hSTATIONID" android:defaultValue="" />
+```
 
 ---
 
@@ -46,16 +53,40 @@ We built **10 versions** to fix the black map on GrapheneOS/Vanadium:
 
 Download the latest APK from the [Releases](https://github.com/wallieminer/Mastchain-Portable-/releases) page.
 
+### Available Builds
+
+| Build | File | Description |
+|-------|------|-------------|
+| **v3.0 Community** | `mastchain-v3.0-community.apk` | Original v3.0 base, credentials removed |
+| **Nav Finish Community** | `mastchain-nav-finish-community.apk` | Nav-finish build with UI improvements, credentials removed |
+
+### 🔧 Build Comparison
+
+**🤖 Claude Code Changes (Nav Finish Build):**
+- ✅ Improved navigation bar flow
+- ✅ Better station dashboard integration
+- ✅ UI refinements for mobile screens
+- ✅ Updated MastChain stats fragment layout
+
+**🎮 SwitchBot/OpenClaw Changes (Both Community Builds):**
+- ❌ Removed hardcoded email → **blank**
+- ❌ Removed hardcoded password/token → **blank**
+- ❌ Removed hardcoded station ID → **blank**
+- ✅ All credential fields default to **empty** — users must enter their own
+
+---
+
 ## 🔧 Setup
 
 1. Install the APK on your Android phone
 2. Connect an **RTL-SDR dongle** via USB OTG
 3. Accept the USB permission popup
 4. Go to **Settings → MastChain Feed**
-5. Fill in:
+5. Fill in **your own** credentials:
    - **URL**: `https://api.mastchain.io/api/upload`
-   - **User**: `your@email.com`
-   - **Password**: `your MastChain token`
+   - **User**: Your MastChain email
+   - **Password**: Your MastChain token
+   - **Station ID**: Your station name
    - **Protocol**: AISCATCHER
    - **Interval**: 60
 6. Start the app and watch ships appear! 🚢
@@ -71,6 +102,19 @@ cd Mastchain-Portable-
 The APK will be in `app/build/outputs/apk/debug/app-debug.apk`.
 
 **Note**: You need the Android SDK and NDK to compile the native C++ code.
+
+### Rebuilding from APK (apktool)
+
+If you want to modify the APK directly:
+
+```bash
+# Decompile
+apktool d mastchain-v3.0.apk -o mastchain-decompiled
+
+# Edit res/xml/preferences.xml — change defaults to blank
+# Rebuild
+apktool b mastchain-decompiled -o mastchain-community.apk
+```
 
 ## 📊 MastChain Dashboard
 
@@ -108,7 +152,7 @@ After setup, you'll see your station on the [MastChain Dashboard](https://app.ma
 | `MainActivity.java` | Added MastChain tab navigation + HttpOutput lifecycle |
 | `Settings.java` | Added HTTP output preferences (hENABLE, hURL, hUSERNAME, hPASSWORD, hSTATIONID, hINTERVAL, hPROTOCOL) |
 | `WebViewMapFragment.java` | Added `onReceivedSslError` bypass + `MIXED_CONTENT_ALWAYS_ALLOW` |
-| `preferences.xml` | Added MastChain Feed preferences category |
+| `preferences.xml` | Added MastChain Feed preferences category — **blank defaults** |
 | `bottom_menu.xml` | Added MastChain tab icon |
 | `AndroidManifest.xml` | Added `networkSecurityConfig` reference |
 
@@ -132,7 +176,7 @@ The `HttpOutputManager` is the core of the MastChain integration. It handles all
 {
   "protocol": "jsonaiscatcher",
   "encodetime": "1719654321",
-  "stationid": "WallieM3",
+  "stationid": "YourStationID",
   "receiver": {
     "description": "AIS-catcher Android",
     "version": "1.09"
@@ -150,9 +194,9 @@ The `HttpOutputManager` is the core of the MastChain integration. It handles all
 |-----|------|---------|-------------|
 | `hENABLE` | boolean | `false` | Master on/off switch |
 | `hURL` | string | `https://api.mastchain.io/api/upload` | Target HTTP endpoint |
-| `hUSERNAME` | string | `wallieminer@protonmail.com` | Basic auth username |
-| `hPASSWORD` | string | *(token)* | Basic auth password |
-| `hSTATIONID` | string | `WallieM3` | Station identifier |
+| `hUSERNAME` | string | *(blank)* | Your MastChain username |
+| `hPASSWORD` | string | *(blank)* | Your MastChain password/token |
+| `hSTATIONID` | string | *(blank)* | Your station identifier |
 | `hINTERVAL` | string | `5` | Post interval in seconds |
 | `hPROTOCOL` | string | `NMEA` | Protocol: NMEA, AISCATCHER, or MINIMAL |
 
@@ -258,7 +302,18 @@ The dashboard refreshes every **10 seconds** when visible. Stats are read from `
 
 ## 📷 Screenshots
 
-*Coming soon — need to take screenshots on a real device*
+| # | Screenshot | Description |
+|---|-----------|-------------|
+| 1 | `screenshots/screenshot-01-main.jpg` | Main screen |
+| 2 | `screenshots/screenshot-02.jpg` | App view |
+| 3 | `screenshots/screenshot-03.jpg` | Settings |
+| 4 | `screenshots/screenshot-04.jpg` | App view |
+| 5 | `screenshots/screenshot-05.jpg` | App view |
+| 6 | `screenshots/screenshot-06.jpg` | App view |
+| 7 | `screenshots/screenshot-07.jpg` | App view |
+| 8 | `screenshots/screenshot-08.jpg` | App view |
+| 9 | `screenshots/screenshot-09.jpg` | App view |
+| 10 | `screenshots/screenshot-10.jpg` | App view |
 
 ---
 
