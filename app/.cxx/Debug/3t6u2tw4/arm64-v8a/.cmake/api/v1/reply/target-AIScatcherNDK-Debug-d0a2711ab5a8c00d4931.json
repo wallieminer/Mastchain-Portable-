@@ -1,0 +1,987 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/build/intermediates/cxx/Debug/3t6u2tw4/obj/arm64-v8a/libAIScatcherNDK.so"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"add_link_options",
+			"target_link_libraries",
+			"add_compile_options",
+			"add_definitions",
+			"add_compile_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 16,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 114,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 95,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 87,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-O3 -g  -fno-limit-debug-info -fPIC   -D HASAIRSPYHF"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-O3"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-ffast-math"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wno-builtin-macro-redefined"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "AIScatcherNDK_EXPORTS"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPY"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPYHF_ANDROID"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPY_ANDROID"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR_BIASTEE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR_TUNERBW"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTL_ANDROID"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "__DATE__=\"Jun  7 2026\""
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/android"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/libusb"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/libusb/os"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./rtl-sdr/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./airspyone_host/libairspy/src"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./airspyhf/libairspyhf/src"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Application"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/IO"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Library"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Tracking"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/JSON"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/DBMS"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/DSP"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Device"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Utilities"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Aviation"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Marine"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20
+			],
+			"sysroot" : 
+			{
+				"path" : "/home/wal/android-sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+			}
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-O3 -g  -fno-limit-debug-info -fPIC   -D HASAIRSPYHF"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-O3"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-ffast-math"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-Wno-builtin-macro-redefined"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "AIScatcherNDK_EXPORTS"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPY"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPYHF_ANDROID"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASAIRSPY_ANDROID"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR_BIASTEE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTLSDR_TUNERBW"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "HASRTL_ANDROID"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "__DATE__=\"Jun  7 2026\""
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/android"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/libusb"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./libusb/libusb/os"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./rtl-sdr/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./airspyone_host/libairspy/src"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./airspyhf/libairspyhf/src"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Application"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/IO"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Library"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Tracking"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/JSON"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/DBMS"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/DSP"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Device"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Utilities"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Aviation"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/wal/.openclaw/workspace/ais-catcher-android/app/src/main/jni/./AIS-catcher/Source/Marine"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70
+			],
+			"sysroot" : 
+			{
+				"path" : "/home/wal/android-sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+			}
+		}
+	],
+	"id" : "AIScatcherNDK::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Qunused-arguments -Wl,--no-undefined",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-Wl,--build-id=none",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-Wl,--strip-debug",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-Wl,--hash-style=gnu",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/home/wal/android-sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86/sysroot/usr/lib/aarch64-linux-android/23/liblog.so",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-static-libstdc++ -latomic -lm",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"sysroot" : 
+		{
+			"path" : "/home/wal/android-sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+		}
+	},
+	"name" : "AIScatcherNDK",
+	"nameOnDisk" : "libAIScatcherNDK.so",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/core.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/descriptor.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/hotplug.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/io.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/sync.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/strerror.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/os/linux_usbfs.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/os/events_posix.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/os/threads_posix.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "libusb/libusb/os/linux_netlink.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/librtlsdr.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/tuner_e4k.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/tuner_fc0012.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/tuner_fc0013.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/tuner_fc2580.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "rtl-sdr/src/tuner_r82xx.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "airspyone_host/libairspy/src/airspy.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "airspyone_host/libairspy/src/iqconverter_float.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "airspyone_host/libairspy/src/iqconverter_int16.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "airspyhf/libairspyhf/src/airspyhf.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "airspyhf/libairspyhf/src/iqbalancer.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/Receiver.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/WebDB.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/Config.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Tracking/DB.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Tracking/Ships.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/DBMS/PostgreSQL.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/AIRSPYHF.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/FileWAV.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/RTLSDR.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/SDRPLAY.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/DSP/Demod.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/DSP/Model.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Marine/AIS.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/JSON/JSONAIS.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/JSON/Keys.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/IO/HTTPClient.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/FileRAW.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/HACKRF.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/UDP.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/RTLTCP.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/ZMQ.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/SoapySDR.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/SpyServer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Marine/Message.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Marine/NMEA.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/Convert.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/Serialize.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/Parse.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/Helper.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Library/TCP.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/JSON/JSON.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/IO/Network.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/IO/HTTPServer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/JSON/StringBuilder.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/JSON/Parser.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/AIRSPY.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Device/Serial.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Aviation/ADSB.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/DSP/DSP.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/WebViewer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/Prometheus.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/IO/Protocol.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Library/Logger.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/DeviceManager.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/StreamHelpers.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Aviation/Basestation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Aviation/Beast.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Utilities/TemplateString.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "AIS-catcher/Source/Application/MapTiles.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 1,
+			"path" : "JNI/AIScatcherNDK.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

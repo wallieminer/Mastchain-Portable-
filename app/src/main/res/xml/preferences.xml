@@ -1,0 +1,263 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="first_preferencescreen"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="system_category"
+        android:title="System">
+
+        <SwitchPreferenceCompat
+            android:key="sSHARING"
+            android:summary="Share AIS with aiscatcher.org"
+            android:defaultValue="False"
+            android:title="Community Share"/>
+
+        <EditTextPreference
+            android:key="sSHARINGKEY"
+            android:defaultValue=""
+            android:summary="Unique sharing key"
+            android:singleLine="true"
+            android:title="Sharing Key"/>
+
+        <SwitchPreferenceCompat
+            android:key="sFORCEDARK"
+            android:summary="Force app theme to Dark Mode"
+            android:defaultValue="False"
+            android:title="Force Dark Mode"/>
+
+        <SwitchPreferenceCompat
+            android:key="sAUTOSTART"
+            android:summary="Auto Start when USB device is available"
+            android:defaultValue="False"
+            android:title="Auto Start"/>
+
+        <SwitchPreferenceCompat
+            android:key="sKEEPSCREENON"
+            android:summary="Keep screen on"
+            android:defaultValue="False"
+            android:title="Keep Screen On"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="rtlsdr_category"
+        android:title="RTL-SDR">
+
+        <ListPreference
+            android:defaultValue="240K"
+            android:dialogTitle="Sample rate"
+            android:entries="@array/rtlsdr_rate_array"
+            android:entryValues="@array/rtlsdr_rate_array"
+            android:key="rRATE"
+            android:title="Sample rate" />
+
+        <ListPreference
+            android:defaultValue="Auto"
+            android:dialogTitle="Tuner Gain"
+            android:entries="@array/tuner_array"
+            android:entryValues="@array/tuner_array"
+            android:key="rTUNER"
+            android:title="Tuner" />
+
+        <SwitchPreferenceCompat
+            android:key="rRTLAGC"
+            android:summary="RTL Automatic Gain Control"
+            android:defaultValue="False"
+            android:title="RTLAGC"/>
+
+        <SwitchPreferenceCompat
+            android:key="rBIASTEE"
+            android:summary="Enable Bias Tee"
+            android:defaultValue="False"
+            android:title="Bias Tee"/>
+
+        <EditTextPreference
+            android:key="rFREQOFFSET"
+            android:defaultValue="0"
+            android:summary="Frequency Correction"
+            android:title="Frequency Correction (PPM)"/>
+
+        <SwitchPreferenceCompat
+            android:key="rBANDWIDTH"
+            android:summary="Use device bandwidth filter"
+            android:defaultValue="False"
+            android:title="RTL bandwidth filter"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="rtltcp_category"
+        android:title="TCP input">
+
+        <EditTextPreference
+            android:key="tHOST"
+            android:defaultValue="localhost"
+            android:summary="IP address of RTL-TCP server"
+            android:singleLine="true"
+            android:title="Server IP"/>
+
+        <EditTextPreference
+            android:key="tPORT"
+            android:defaultValue="12345"
+            android:summary="Port of RTL-TCP server"
+            android:singleLine="true"
+            android:title="Server Port"/>
+
+        <ListPreference
+            android:defaultValue="RTLTCP"
+            android:dialogTitle="Protocol"
+            android:entries="@array/tcp_protocol_array"
+            android:entryValues="@array/tcp_protocol_array"
+            android:key="tPROTOCOL"
+            android:title="Protocol" />
+
+        <ListPreference
+            android:defaultValue="240K"
+            android:dialogTitle="Sample rate"
+            android:entries="@array/rtltcp_rate_array"
+            android:entryValues="@array/rtltcp_rate_array"
+            android:key="tRATE"
+            android:title="Sample rate" />
+
+        <ListPreference
+            android:defaultValue="Auto"
+            android:dialogTitle="Tuner Gain"
+            android:entries="@array/tuner_array"
+            android:entryValues="@array/tuner_array"
+            android:key="tTUNER"
+            android:title="Tuner" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="output_category"
+        android:title="Output UDP">
+
+        <SwitchPreferenceCompat
+            android:key="u1SWITCH"
+            android:defaultValue="False"
+            android:title="UDP Server 1"/>
+
+        <EditTextPreference
+            android:key="u1HOST"
+            android:defaultValue="127.0.0.1"
+            android:dependency="u1SWITCH"
+            android:title="IP"/>
+
+        <EditTextPreference
+            android:key="u1PORT"
+            android:defaultValue="10101"
+            android:dependency="u1SWITCH"
+            android:title="Port"/>
+
+        <SwitchPreferenceCompat
+            android:key="u1JSON"
+            android:defaultValue="False"
+            android:dependency="u1SWITCH"
+            android:title="JSON"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="output_tcp_server_category"
+        android:title="Output TCP NMEA Server">
+
+        <SwitchPreferenceCompat
+            android:key="s1SWITCH"
+            android:defaultValue="False"
+            android:title="TCP NMEA Server"/>
+
+        <EditTextPreference
+            android:key="s1PORT"
+            android:dependency="s1SWITCH"
+            android:defaultValue="5012"
+            android:title="Port"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="http_output_category"
+        android:title="MastChain Feed">
+
+        <SwitchPreferenceCompat
+            android:key="hENABLE"
+            android:summary="Send AIS data to MastChain or any HTTP endpoint"
+            android:defaultValue="false"
+            android:title="Enable HTTP Output"/>
+
+        <EditTextPreference
+            android:key="hURL"
+            android:defaultValue="https://api.mastchain.io/api/upload"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="URL"/>
+
+        <EditTextPreference
+            android:key="hUSERNAME"
+            android:defaultValue="wallieminer@protonmail.com"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Username"/>
+
+        <EditTextPreference
+            android:key="hPASSWORD"
+            android:defaultValue="6mlgmE9UhB5iAa4mOyFdCaZmiWG5t39K5yOC0/H92Hk="
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Password"/>
+
+        <EditTextPreference
+            android:key="hSTATIONID"
+            android:defaultValue="WallieM3"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Station ID"/>
+
+        <EditTextPreference
+            android:key="hINTERVAL"
+            android:defaultValue="5"
+            android:dependency="hENABLE"
+            android:singleLine="true"
+            android:title="Interval (seconds)"/>
+
+        <ListPreference
+            android:key="hPROTOCOL"
+            android:defaultValue="NMEA"
+            android:dependency="hENABLE"
+            android:dialogTitle="Protocol"
+            android:entries="@array/http_protocol_array"
+            android:entryValues="@array/http_protocol_array"
+            android:title="Protocol"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="model_category"
+        android:title="Receiver">
+
+        <ListPreference
+            android:defaultValue="Default"
+            android:dialogTitle="Model"
+            android:entries="@array/model_type_array"
+            android:entryValues="@array/model_type_array"
+            android:key="oMODEL_TYPE"
+            android:title="Receiver decoding model" />
+
+        <ListPreference
+            android:defaultValue="Default"
+            android:dialogTitle="Frequency Correction"
+            android:entries="@array/cgf_array"
+            android:entryValues="@array/cgf_array"
+            android:key="oCGF_WIDE"
+            android:title="Applied frequency correction" />
+
+        <SwitchPreferenceCompat
+            android:key="oFP_DS"
+            android:summary="Enable Fixed Point downsampling"
+            android:defaultValue="False"
+            android:title="Fixed Point downsampling"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
