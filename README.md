@@ -19,14 +19,43 @@ The original builds contained **hardcoded personal credentials** as default valu
 
 ## 📱 Available Builds
 
+### 🌟 Moonraise Tool3 (Recommended)
+
 | Build | File | Size | Description |
 |-------|------|------|-------------|
-| **v3.0 Community** | `builds/mastchain-v3.0-community.apk` | 9.5 MB | Original v3.0 base, credentials removed |
-| **Nav Finish Community** | `builds/mastchain-nav-finish-community.apk` | 9.5 MB | Nav-finish build with UI improvements, credentials removed |
+| **Tool3 v6** | `builds/moonraise-tool3-v6.apk` | 3.3 MB | Official Moonraise TWA — lightweight web wrapper for `tool3.xyz` |
+
+**Why recommended:**
+- ✅ Release-signed by Moonraise (CN=Cong Hung) — installs on all Android devices
+- ✅ APK Signature v3 — works on Android 5.0+
+- ✅ Only 3.3 MB — lightweight
+- ✅ No hardcoded credentials — clean
+- ✅ Always up-to-date — loads the web interface from tool3.xyz
+- ⚠️ Requires internet connection (loads web app)
+
+### 🔧 AIS Catcher (Advanced / Offline)
+
+| Build | File | Size | Description |
+|-------|------|------|-------------|
+| **v3.0 Community** | `builds/mastchain-v3.0-community.apk` | 9.6 MB | Original v3.0 base, credentials removed |
+| **Nav Finish Community** | `builds/mastchain-nav-finish-community.apk` | 9.6 MB | Nav-finish build with UI improvements, credentials removed |
+
+**For advanced users:**
+- ✅ Native app — works offline with SDR dongle
+- ✅ AIS Catcher + MastChain upload integration
+- ⚠️ Debug-signed — may not install on all devices
+- ⚠️ Larger download (9.6 MB)
+- ⚠️ Requires RTL-SDR dongle for full functionality
 
 ---
 
 ## 🔧 What Changed — Build Comparison
+
+### 🌙 Moonraise Tool3 (Official TWA)
+- Official app from Moonraise, signed with their release key
+- TWA (Trusted Web Activity) wrapper loading `tool3.xyz`
+- No credentials, no personal data — completely clean
+- v3 APK signature scheme for maximum compatibility
 
 ### 🤖 Claude Code Changes (Nav Finish Build)
 The nav-finish build was created with **Claude Code** and includes:
@@ -37,7 +66,7 @@ The nav-finish build was created with **Claude Code** and includes:
 - ✅ Updated MastChain stats fragment layout
 - ⚠️ Original personal credentials were hardcoded → **now removed**
 
-### 🎮 SwitchBot/OpenClaw Changes (Both Builds)
+### 🎮 SwitchBot/OpenClaw Changes (Both AIS Catcher Builds)
 Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchClaw device:
 
 - ❌ **Removed** hardcoded email → **blank**
@@ -64,6 +93,14 @@ Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchCl
 
 ## 🚀 Installation
 
+### Moonraise Tool3 (Recommended)
+1. Download `moonraise-tool3-v6.apk` from the builds folder
+2. Enable **"Install from unknown sources"** on your Android device
+3. Install the APK
+4. Open the app → it loads `tool3.xyz`
+5. Log in with your MastChain credentials
+
+### AIS Catcher (Advanced)
 1. Download the APK of your choice
 2. Enable **"Install from unknown sources"** on your Android device
 3. Install the APK
@@ -78,58 +115,20 @@ Both community builds were sanitized by **SwitchBot (OpenClaw)** on the SwitchCl
 - ✅ No API keys, tokens, or real credentials hardcoded
 - ✅ All credential fields are **blank** — users must enter their own
 - ✅ MastChain API URL points to the official endpoint
+- ✅ Moonraise Tool3 APK is release-signed by Moonraise (CN=Cong Hung, VN)
 
 ---
 
-## 🏗️ Building from Source
+## 📊 Build Comparison
 
-If you want to rebuild from the decompiled source:
-
-```bash
-# Decompile
-apktool d mastchain-v3.0.apk -o mastchain-decompiled
-
-# Edit res/xml/preferences.xml - change defaults to blank
-# Rebuild
-apktool b mastchain-decompiled -o mastchain-community.apk
-```
-
----
-
-## 📸 Screenshots
-
-<p align="center">
-  <img src="screenshots/01-main-map.jpg" width="200" alt="Main map view" />
-  <img src="screenshots/02-map-zoomed.jpg" width="200" alt="Map zoomed in" />
-  <img src="screenshots/03-vessel-list.jpg" width="200" alt="Vessel list" />
-  <img src="screenshots/04-vessel-detail.jpg" width="200" alt="Vessel detail" />
-</p>
-
-<p align="center">
-  <img src="screenshots/05-mastchain-dashboard.jpg" width="200" alt="MastChain dashboard" />
-  <img src="screenshots/06-mastchain-feed-settings.jpg" width="200" alt="MastChain feed settings" />
-  <img src="screenshots/07-settings-main.jpg" width="200" alt="Settings" />
-  <img src="screenshots/08-settings-rtl-sdr.jpg" width="200" alt="RTL-SDR settings" />
-</p>
-
-<p align="center">
-  <img src="screenshots/09-mastchain-stats.jpg" width="200" alt="MastChain stats" />
-  <img src="screenshots/10-app-about.jpg" width="200" alt="App about" />
-</p>
-
-| # | File | Description |
-|---|------|-------------|
-| 1 | `screenshots/01-main-map.jpg` | Main map with ship positions |
-| 2 | `screenshots/02-map-zoomed.jpg` | Map zoomed in on vessels |
-| 3 | `screenshots/03-vessel-list.jpg` | Vessel list view |
-| 4 | `screenshots/04-vessel-detail.jpg` | Vessel detail info |
-| 5 | `screenshots/05-mastchain-dashboard.jpg` | MastChain dashboard tab |
-| 6 | `screenshots/06-mastchain-feed-settings.jpg` | MastChain feed settings |
-| 7 | `screenshots/07-settings-main.jpg` | Main settings screen |
-| 8 | `screenshots/08-settings-rtl-sdr.jpg` | RTL-SDR settings |
-| 9 | `screenshots/09-mastchain-stats.jpg` | MastChain statistics |
-| 10 | `screenshots/10-app-about.jpg` | App info screen |
-
----
-
-Built by the community, for the community 🤝
+| | Moonraise Tool3 v6 | AIS Catcher v3.0 | AIS Catcher Nav Finish |
+|---|---|---|---|
+| **Package** | com.moonraise.tool3 | com.jvdegithub.aiscatcher | com.jvdegithub.aiscatcher |
+| **Type** | TWA (web wrapper) | Native app | Native app |
+| **Size** | 3.3 MB | 9.6 MB | 9.6 MB |
+| **Signing** | Moonraise release key | Debug key | Debug key |
+| **Min Android** | 5.0 (SDK 21) | 6.0 (SDK 23) | 6.0 (SDK 23) |
+| **Target Android** | 15 (SDK 35) | 14 (SDK 34) | 14 (SDK 34) |
+| **Needs Internet** | ✅ Yes | ❌ No (SDR mode) | ❌ No (SDR mode) |
+| **Needs SDR Dongle** | ❌ No | ✅ Yes | ✅ Yes |
+| **Credentials** | None (web login) | None (removed) | None (removed) |
